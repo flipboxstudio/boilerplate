@@ -96,10 +96,10 @@ I'm **NOT** planning to make this boilerplate works with any other RDMS but the 
 The problem is, current boilerplate not using [SQLBuilder](https://github.com/StackExchange/Dapper/tree/master/Dapper.SqlBuilder).
 If you want it be, just sent me a pull request.
 
-- [] Unit test, docs [here](https://docs.microsoft.com/en-us/dotnet/articles/core/testing/unit-testing-with-dotnet-test).
-- [] Improve [documentation](https://msdn.microsoft.com/en-us/library/5ast78ax.aspx).
-- [] Test on Linux and Mac.
-- [] Change Memory Caching to something [distributed](https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed) like [Redis](https://redis.io/).
+- [ ] Unit test, docs [here](https://docs.microsoft.com/en-us/dotnet/articles/core/testing/unit-testing-with-dotnet-test).
+- [ ] Improve [documentation](https://msdn.microsoft.com/en-us/library/5ast78ax.aspx).
+- [ ] Test on Linux and Mac.
+- [ ] Change Memory Caching to something [distributed](https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed) like [Redis](https://redis.io/).
 
 ## LICENSE
 
