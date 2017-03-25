@@ -1,38 +1,84 @@
 ﻿// ReSharper disable CheckNamespace
 
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Reflection;
 using Boilerplate.Model;
-using Boilerplate.Services;
 using Dapper;
 
-namespace Boilerplate
+namespace Boilerplate.Services
 {
     public static class UserQueryBuilderExtension
     {
         /// <summary>
-        /// Get User by it's Username.
+        ///     Get User by it's Username.
         /// </summary>
-        /// <param name="db"></param>
+        /// <param name="database"></param>
         /// <param name="username"></param>
         /// <returns></returns>
-        public static User FindUserByUsername(this Database db, string username)
+        public static User FindUserByUsername(this Database database, string username)
         {
-            return db.Connection
-                .Query<User>("SELECT * FROM [dbo].[Users] WHERE [Username] = @username", new {username})
-                .FirstOrDefault();
+            var predicates = new List<Dictionary<string, object>>
+            {
+                new Dictionary<string, object> {{"Username = @username", new {username}}}
+            };
+
+            return FindAll(database, predicates).First();
         }
 
         /// <summary>
-        /// Get User by it's UserID.
+        ///     Get User by it's UserID.
         /// </summary>
-        /// <param name="db"></param>
+        /// <param name="database"></param>
         /// <param name="userID"></param>
         /// <returns></returns>
-        public static User FindUserByID(this Database db, int userID)
+        public static User FindUserByID(this Database database, int userID)
         {
-            return db.Connection
-                .Query<User>("SELECT * FROM [dbo].[Users] WHERE [UserID] = @userID", new {userID})
-                .FirstOrDefault();
+            var predicates = new List<Dictionary<string, object>>
+            {
+                new Dictionary<string, object> {{"UserID = @userID", new {userID}}}
+            };
+
+            return FindAll(database, predicates).First();
+        }
+
+        /// <summary>
+        ///     Find all Users by criteria.
+        /// </summary>
+        /// <param name="database"></param>
+        /// <param name="predicates"></param>
+        /// <returns></returns>
+        private static IEnumerable<User> FindAll(Database database,
+            IEnumerable<Dictionary<string, object>> predicates = null)
+        {
+            var builder = new SqlBuilder();
+            var template = builder.AddTemplate($"SELECT /**select**/ FROM {GetTableAttribute().Name} /**where**/");
+
+            predicates?.ToList()
+                .ForEach(
+                    predicate =>
+                    {
+                        predicate.ToList().ForEach(criteria => builder.Select("*").Where(criteria.Key, criteria.Value));
+                    });
+
+            database.Connection.Open();
+
+            var result = database.Connection
+                .Query<User>(template.RawSql, template.Parameters);
+
+            database.Connection.Close();
+
+            return result;
+        }
+
+        /// <summary>
+        ///     Get table information from Attribute.
+        /// </summary>
+        /// <returns></returns>
+        private static TableAttribute GetTableAttribute()
+        {
+            return typeof(User).GetTypeInfo().GetCustomAttribute<TableAttribute>();
         }
     }
 }

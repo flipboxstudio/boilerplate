@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using static BCrypt.Net.BCrypt;
 
 namespace Boilerplate.Controllers.v1
 {
@@ -156,7 +157,7 @@ namespace Boilerplate.Controllers.v1
 
             user = iUser;
 
-            return iUser != null && BCrypt.Net.BCrypt.Verify(authRequest.Password, iUser.Password);
+            return iUser != null && Verify(authRequest.Password, iUser.Password);
         }
 
         /// <summary>Retrieve claims through your claims provider</summary>

@@ -18,6 +18,7 @@ namespace Boilerplate
 {
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class Startup
     {
         public Startup(IHostingEnvironment env)

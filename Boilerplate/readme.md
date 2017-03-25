@@ -5,6 +5,7 @@ This is a dead simple boilerplate to build Restful API using .NET Core.
 ## Features
 
 - ORM using [Dapper](https://github.com/StackExchange/Dapper) over [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/).
+    * Dapper SQL Builder.
 - [BCrypt](https://en.wikipedia.org/wiki/Bcrypt) Password Hashing.
 - [JWT](https://en.wikipedia.org/wiki/JSON_Web_Token) Authentication.
     * With blacklist method available via memory caching<sup>*</sup>, read more [here](https://auth0.com/blog/blacklist-json-web-token-api-keys/).
@@ -14,7 +15,7 @@ This is a dead simple boilerplate to build Restful API using .NET Core.
 - Lots of helpers (check the `Extensions` folder).
 - More to come :)
 
-<sup>*</sup>: Restarting server may cause all token become blacklisted.
+[<sup>*</sup>]: Restarting server may cause all token become blacklisted.
 
 ## Routes
 
@@ -91,10 +92,6 @@ req.end(function (res) {
 5. Run the application via `dotnet run`.
 
 ## TODO
-
-I'm **NOT** planning to make this boilerplate works with any other RDMS but the SQL Server one.
-The problem is, current boilerplate not using [SQLBuilder](https://github.com/StackExchange/Dapper/tree/master/Dapper.SqlBuilder).
-If you want it be, just sent me a pull request.
 
 - [ ] Unit test, docs [here](https://docs.microsoft.com/en-us/dotnet/articles/core/testing/unit-testing-with-dotnet-test).
 - [ ] Improve [documentation](https://msdn.microsoft.com/en-us/library/5ast78ax.aspx).
