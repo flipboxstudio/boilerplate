@@ -19,5 +19,7 @@
     <PackageReference Include="MySql.Data" Version="7.0.7-m61"/>
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.2"/>
     <PackageReference Include="MailKit" Version="1.16.1"/>
+    <PackageReference Include="Handlebars.Net" Version="1.9.0"/>
+    <PackageReference Include="System.IO.FileSystem" Version="4.3.0"/>
   </ItemGroup>
 </Project>

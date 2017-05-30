@@ -1,14 +1,12 @@
-using App.Exceptions;
-using App.Options;
 using App.Response.v1;
 using App.Request;
 using App.Services;
 using static BCrypt.Net.BCrypt;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using System;
 using MimeKit;
+using System.IO;
 
 namespace Boilerplate.Controllers.v1
 {
@@ -26,11 +24,6 @@ namespace Boilerplate.Controllers.v1
         private readonly Mailer _mailer;
 
         /// <summary>
-        /// JWT Config, we need to tell client when the token valid until.
-        /// </summary>
-        private readonly JwtConfig _jwtConfig;
-
-        /// <summary>
         /// Authenticator instance, responsible to authenticate user and generate token.
         /// </summary>
         private readonly Authenticator _authenticator;
@@ -43,19 +36,17 @@ namespace Boilerplate.Controllers.v1
         /// <param name="mailer"></param>
         /// <param name="authenticator"></param>
         public AuthController(
-            IOptions<JwtConfig> jwtConfig,
             Database database,
             Mailer mailer,
             Authenticator authenticator)
         {
-            _jwtConfig = jwtConfig.Value;
             _database = database;
             _mailer = mailer;
             _authenticator = authenticator;
         }
 
         /// <summary>
-        ///     Register new User.
+        /// Register new User.
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
@@ -68,16 +59,15 @@ namespace Boilerplate.Controllers.v1
             var user = _database.AddUser(
                 App.Model.User.CreateFromRequest(request)
             );
-
             _mailer.SendEmail(
                 new MailboxAddress(user.FullName, user.Email),
-                "Welcome",
-                $@"Dear {user.NickName},
-
-Welcome to our App!
-
-Regards,
-Robot"
+                "Welcome to App",
+                Directory.GetCurrentDirectory() + "/Resources/Views/hello.html",
+                new {
+                    baseUrl = Url.AbsoluteContent(""),
+                    subject = "Welcome to App",
+                    nickName = user.NickName
+                }
             );
 
             return new Registered {
@@ -87,7 +77,7 @@ Robot"
         }
 
         /// <summary>
-        ///     Authenticate a User.
+        /// Authenticate a User.
         /// </summary>
         /// <param name="authRequest"></param>
         /// <returns></returns>
@@ -100,17 +90,12 @@ Robot"
             return new Authenticated
             {
                 Message = "OK",
-                Data = new AuthData
-                {
-                    AccessToken = _authenticator.Authenticate(authRequest),
-                    ExpiresIn = (int) _jwtConfig.ValidFor.TotalSeconds,
-                    User = _authenticator.User
-                }
+                Data = _authenticator.Authenticate(authRequest)
             };
         }
 
         /// <summary>
-        ///     Send email to user about forgot password.
+        /// Send email to user about forgot password.
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
@@ -123,12 +108,12 @@ Robot"
             _mailer.SendEmail(
                 new MailboxAddress(user.FullName, user.Email),
                 "Password Reset",
-                $@"Dear {user.NickName},
-
-Here's your new password: {newPassword}. You need to change this password once you signed in to application.
-
-Regards,
-Robot"
+                Directory.GetCurrentDirectory() + "/Resources/Views/password.html",
+                new {
+                    baseUrl = Url.AbsoluteContent(""),
+                    subject = "Password Reset",
+                    newPassword
+                }
             );
 
             user.Password = HashPassword(newPassword);
@@ -143,7 +128,7 @@ Robot"
         }
 
         /// <summary>
-        ///     Protected route for authenticated authRequest (any Role is OK).
+        /// Get current authenticated user.
         /// </summary>
         /// <returns></returns>
         [HttpGet("user", Name = "v1.auth.user")]

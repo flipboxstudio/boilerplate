@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System;
 using App.Exceptions;
+using App.Response.v1;
 
 namespace App.Services
 {
@@ -46,7 +47,7 @@ namespace App.Services
         /// </summary>
         /// <param name="authRequest"></param>
         /// <returns></returns>
-        public string Authenticate(AuthRequest authRequest)
+        public AuthData Authenticate(AuthRequest authRequest)
         {
             var claimsIdentity = TryIsValidCredential(authRequest, out User user)
                 ? CreateClaimsIdentity(user)
@@ -55,10 +56,13 @@ namespace App.Services
             if (claimsIdentity == null)
                 throw new BadRequestException("Invalid credentials.");
 
-            if (user.NeedToChangePassword)
-                throw new BadRequestException("Password needs to be changed.");
+            var token = GenerateToken(claimsIdentity);
 
-            return GenerateToken(claimsIdentity);
+            return new AuthData {
+                AccessToken = token,
+                ExpiresIn = (int) _jwtConfig.ValidFor.TotalSeconds,
+                User = user
+            };
         }
 
         /// <summary>

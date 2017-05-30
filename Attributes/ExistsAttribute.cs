@@ -45,9 +45,14 @@ namespace App.Attributes
             var database = (Database) validationContext
                          .GetService(typeof(Database));
 
-            var count = database.Connection.ExecuteScalar<int>($"SELECT COUNT(*) FROM {_table} WHERE {_column} = @value", new { value });
+            var count = database.Connection.ExecuteScalar<int>(
+                $"SELECT COUNT(*) FROM {_table} WHERE {_column} = @value",
+                new { value }
+            );
 
-            return (count > 0) ? ValidationResult.Success : new ValidationResult(FormatErrorMessage(_column));
+            return (count > 0)
+                ? ValidationResult.Success
+                : new ValidationResult(FormatErrorMessage(_column));
         }
     }
 }

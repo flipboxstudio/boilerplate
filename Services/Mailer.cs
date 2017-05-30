@@ -2,6 +2,7 @@ using App.Options;
 using MailKit.Net.Smtp;
 using MailKit;
 using MimeKit;
+using HandlebarsDotNet;
 
 namespace App.Services
 {
@@ -55,7 +56,7 @@ namespace App.Services
         /// <param name="to"></param>
         /// <param name="subject"></param>
         /// <param name="content"></param>
-        public void SendEmail(MailboxAddress to, string subject, string content)
+        public void SendEmail(MailboxAddress to, string subject, TextPart content)
         {
             var message = new MimeMessage();
             var from = new MailboxAddress(
@@ -73,8 +74,40 @@ namespace App.Services
             message.Subject = subject;
 
             // Set email content.
+            message.Body = content;
+
+            SendMessage(message);
+        }
+
+        public void SendEmail(MailboxAddress to, string subject, string path, object data)
+        {
+            var message = new MimeMessage();
+            var from = new MailboxAddress(
+                AppConfig.MailerName,
+                AppConfig.MailerUser
+            );
+
+            // Set "from".
+            message.From.Add(from);
+
+            // Set recipient.
+            message.To.Add(to);
+
+            // Set email subject.
+            message.Subject = subject;
+
+            var source = System.IO.File.ReadAllText(path);
+            var template = Handlebars.Compile(source);
+            var content = template(data);
+
+            // Set email content.
             message.Body = new TextPart("plain") { Text = content };
 
+            SendMessage(message);
+        }
+
+        private void SendMessage (MimeMessage message)
+        {
             using (var client = new SmtpClient())
             {
                 client.ServerCertificateValidationCallback = (s, c, h, e) => true;

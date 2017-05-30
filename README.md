@@ -14,6 +14,7 @@ This is a dead simple boilerplate to build Restful API using .NET Core.
 - Lots of helpers (check the `Extensions` folder).
 - Static assets provider.
 - Mailer.
+- Need HTML template engine? Don't worry. We have HandleBars!
 - More to come :)
 
 ## Quick Start
