@@ -16,14 +16,13 @@ This is a dead simple boilerplate to build Restful API using .NET Core.
 - Mailer.
 - More to come :)
 
-[<sup>*</sup>]: Restarting server may cause all token become blacklisted.
-
 ## Quick Start
 
 - Clone this repo.
 - Remove `.git` folder if needed.
 - Restore database inside `AppData` folder.
 - Configure database connection in `appsettings.json`.
+- Configure email provider in `appsettings.json`.
 - Inside `app` folder, run `dotnet restore`.
 - To run this app, there are two alternatives:
   - Via [Debugger](https://docs.microsoft.com/en-us/dotnet/articles/csharp/getting-started/with-visual-studio-code#debug) in [Visual Studio Code](https://code.visualstudio.com/) (recommended):
@@ -32,6 +31,8 @@ This is a dead simple boilerplate to build Restful API using .NET Core.
   - Via dotnet:
     - Inside `app` folder, run `dotnet run`.
 
+> **ATTENTION** When running inside production machine, make sure you have generated JWT Signing Key.
+
 ## Routes
 
 Below is available route comes with this boilerplate:
@@ -39,70 +40,24 @@ Below is available route comes with this boilerplate:
 ```
 GET   /                         => root [allow-anonymous]
 GET   /v1                       => v1 root [allow-anonymous]
+POST  /v1/auth/register         => register a new user [allow-anonymous] [sending email]
 POST  /v1/auth/login            => authentication
+POST  /v1/auth/forgot           => request new password via email, in case you forgot your password [allow-anonymous] [sending email]
 GET   /v1/auth/user             => check authentication, return current authenticated user
-GET   /v1/auth/admin            => same as above, but this route is for admin role only
-POST  /v1/auth/logout           => logout
-PATCH /v1/auth/refresh          => refresh the token
-PATCH /v1/geonames?Query=@Query => example route that interacts with database
+PUT   /v1/user/profile          => change basic user profile
+PUT   /v1/user/password         => change user password
+PUT   /v1/user/avatar           => change user avatar
 ```
 
-### Default Credentials
+## Example Request
 
-#### User
-
-```js
-var unirest = require("unirest");
-var req = unirest("POST", "http://localhost:5000/v1/auth/login");
-
-req.headers({
-  "cache-control": "no-cache",
-  "content-type": "application/json"
-});
-
-req.type("json");
-req.send({
-  "Identity": "user",
-  "Password": "user"
-});
-
-req.end(function (res) {
-  if (res.error) throw new Error(res.error);
-
-  console.log(res.body);
-});
-```
-
-#### Admin
-
-```js
-var unirest = require("unirest");
-var req = unirest("POST", "http://localhost:5000/v1/auth/login");
-
-req.headers({
-  "cache-control": "no-cache",
-  "content-type": "application/json"
-});
-
-req.type("json");
-req.send({
-  "Identity": "admin",
-  "Password": "admin"
-});
-
-req.end(function (res) {
-  if (res.error) throw new Error(res.error);
-
-  console.log(res.body);
-});
-```
+I made a simple Postman Collection [here](https://www.getpostman.com/collections/bfc5c63ad66543463321).
 
 ## TODO
 
 - [ ] Unit test, docs [here](https://docs.microsoft.com/en-us/dotnet/articles/core/testing/unit-testing-with-dotnet-test).
 - [ ] Improve [documentation](https://msdn.microsoft.com/en-us/library/5ast78ax.aspx).
-- [ ] Test on Linux and Mac.
-- [ ] Change Memory Caching to something [distributed](https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed) like [Redis](https://redis.io/).
+- Using options instead of public static property.
 
 ## LICENSE
 
@@ -125,3 +80,5 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+Written with :heart: by Krisan Alfa Timur at Jakarta.
