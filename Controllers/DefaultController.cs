@@ -14,12 +14,12 @@ namespace App.Controllers
         /// <returns></returns>
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Get()
+        public Success Get()
         {
-            return new OkObjectResult(new Success
+            return new Success
             {
                 Message = "You have arrived."
-            });
+            };
         }
     }
 }

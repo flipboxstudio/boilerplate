@@ -1,25 +1,42 @@
+using System;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
+using App.Request;
 
 namespace App.Model
 {
-    [Table("Users")]
     public class User
     {
-        [Column("id")]
-        [JsonProperty("user_id")]
         public int Id { get; set; }
 
-        [Column("username")]
-        [JsonProperty("username")]
-        public string Username { get; set; }
+        public string Email { get; set; }
 
-        [Column("role")]
-        [JsonProperty("role")]
-        public string Role { get; set; }
+        public string FullName { get; set; }
+
+        public string NickName { get; set; }
 
         [JsonIgnore]
-        [Column("password")]
         public string Password { get; set; }
+
+        public string Phone { get; set; }
+
+        public string Avatar { get; set; }
+
+        public bool NeedToChangePassword { get; set; }
+
+        public DateTime? CreatedAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
+        public static User CreateFromRequest(AuthRegister request)
+        {
+            return new User {
+                Email = request.Email,
+                FullName = request.FullName,
+                NickName = request.NickName,
+                Password = request.Password,
+                Phone = request.Phone,
+                Avatar = string.Format("https://www.gravatar.com/avatar/{0}", request.Email.CalculateMD5())
+            };
+        }
     }
 }

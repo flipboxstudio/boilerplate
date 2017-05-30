@@ -1,32 +1,38 @@
 using App.Model;
 using Newtonsoft.Json;
 
-namespace App.Response.v1 {
-    public class Authenticated {
-        [JsonProperty("message")]
+namespace App.Response.v1
+{
+    public class Authenticated
+    {
         public string Message { get; set; }
 
-        [JsonProperty("data")]
-        public Data Data { get; set; }
+        public AuthData Data { get; set; }
     }
 
-    public class Refreshed {
-        [JsonProperty("message")]
+    public class Registered
+    {
         public string Message { get; set; }
 
-        [JsonProperty("data")]
-        public Data Data { get; set; }
-    }
-
-    public class Profile {
-        [JsonProperty("message")]
-        public string Message { get; set; }
-
-        [JsonProperty("data")]
         public User Data { get; set; }
     }
 
-    public class Data {
+    public class Forgot
+    {
+        public string Message { get; set; }
+
+        public User Data { get; set; }
+    }
+
+    public class Profile
+    {
+        public string Message { get; set; }
+
+        public User Data { get; set; }
+    }
+
+    public class AuthData
+    {
         [JsonProperty("access_token")]
         public string AccessToken { get; set; }
 

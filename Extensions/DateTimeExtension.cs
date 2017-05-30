@@ -1,9 +1,12 @@
-﻿// ReSharper disable once CheckNamespace
-
-namespace System
+﻿namespace System
 {
     public static class DateTimeExtension
     {
+        /// <summary>
+        /// Convert to unix epoch date.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public static long ToUnixEpochDate(this DateTime date)
         {
             return (long) Math.Round((date.ToUniversalTime() -

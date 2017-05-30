@@ -5,14 +5,15 @@ This is a dead simple boilerplate to build Restful API using .NET Core.
 ## Features
 
 - ORM using [Dapper](https://github.com/StackExchange/Dapper) over [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/).
-    * Dapper SQL Builder.
+    * Dapper MicroCRUD.
 - [BCrypt](https://en.wikipedia.org/wiki/Bcrypt) Password Hashing.
 - [JWT](https://en.wikipedia.org/wiki/JSON_Web_Token) Authentication.
-    * With blacklist method available via memory caching<sup>*</sup>, read more [here](https://auth0.com/blog/blacklist-json-web-token-api-keys/).
 - JSON page error handler.
 - Fully configurable via `appsetings.json`.
 - Route versioning.
 - Lots of helpers (check the `Extensions` folder).
+- Static assets provider.
+- Mailer.
 - More to come :)
 
 [<sup>*</sup>]: Restarting server may cause all token become blacklisted.
@@ -21,10 +22,7 @@ This is a dead simple boilerplate to build Restful API using .NET Core.
 
 - Clone this repo.
 - Remove `.git` folder if needed.
-- Create database:
-  - `CREATE DATABASE app`.
-  - Restore the SQL file inside `AppData` folder.
-  - Download GeoNames file (per country is enough), restore it using command `LOAD DATA LOCAL INFILE '/path/to/file.txt' INTO TABLE app.GeoNames;`.
+- Restore database inside `AppData` folder.
 - Configure database connection in `appsettings.json`.
 - Inside `app` folder, run `dotnet restore`.
 - To run this app, there are two alternatives:

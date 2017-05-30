@@ -8,8 +8,8 @@ namespace Microsoft.AspNetCore.Mvc
     public static class UrlHelperExtension
     {
         /// <summary>
-        ///     Generates a fully qualified URL to the specified content by using the specified content path. Converts a
-        ///     virtual (relative) path to an application absolute path.
+        ///     Generates a fully qualified URL to the specified content by using the specified content path.
+        ///     Converts a virtual (relative) path to an application absolute path.
         /// </summary>
         /// <param name="url">The URL helper.</param>
         /// <param name="contentPath">The content path.</param>

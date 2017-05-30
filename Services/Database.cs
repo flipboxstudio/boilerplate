@@ -1,23 +1,29 @@
 using MySql.Data.MySqlClient;
 using System.Data;
-using System.Data.SqlClient;
+using Dapper.MicroCRUD;
 
 namespace App.Services
 {
     public class Database
     {
-        private readonly string DatabaseEngine;
-
+        /// <summary>
+        /// Connection string.
+        /// </summary>
         private readonly string ConnectionString;
 
-        public IDbConnection Connection => (DatabaseEngine == "mysql")
-                ? new MySqlConnection(ConnectionString) as IDbConnection
-                : new SqlConnection(ConnectionString) as IDbConnection;
+        /// <summary>
+        /// Always create new instance to prevent locking.
+        /// </summary>
+        public IDbConnection Connection => new MySqlConnection(ConnectionString);
 
-        public Database(string databaseEngine, string connectionString)
+        /// <summary>
+        /// Initialize class.
+        /// </summary>
+        /// <param name="connectionString"></param>
+        public Database(string connectionString)
         {
-            DatabaseEngine = databaseEngine;
             ConnectionString = connectionString;
+            MicroCRUDConfig.DefaultDialect = Dialect.PostgreSql;
         }
     }
 }

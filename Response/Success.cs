@@ -1,11 +1,11 @@
 using Newtonsoft.Json;
 
-namespace App.Response {
-    public class Success {
-        [JsonProperty("message")]
-        public string Message { get; set; } = "Ok.";
+namespace App.Response
+{
+    public class Success
+    {
+        public string Message { get; set; } = "OK";
 
-        [JsonProperty("data")]
         public object Data { get; set; } = new { };
     }
 }

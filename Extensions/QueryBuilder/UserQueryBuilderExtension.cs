@@ -1,25 +1,24 @@
-﻿using App.Model;
-using static App.Services.DapperQueryBuilderExtension;
+using App.Model;
 using Dapper;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
+using System;
 
 namespace App.Services
 {
     public static class UserQueryBuilderExtension
     {
         /// <summary>
-        ///     Get User by it's Username.
+        ///     Get User by it's email.
         /// </summary>
         /// <param name="database"></param>
-        /// <param name="username"></param>
+        /// <param name="email"></param>
         /// <returns></returns>
-        public static User FindUserByUsername(this Database database, string username)
+        public static User FindUserByEmail(this Database database, string email)
         {
-            var predicates = new Dictionary<string, object> {{"username = @username", new {username}}};
-            var result = FindAll<User>(database, predicates);
+            var result = database.Connection.GetRange<User>("WHERE Email = @email", new { email });
 
             return result.Count() == 0 ? null : result.First();
         }
@@ -32,10 +31,38 @@ namespace App.Services
         /// <returns></returns>
         public static User FindUserByID(this Database database, int userID)
         {
-            var predicates = new Dictionary<string, object> {{"id = @userID", new {userID}}};
-            var result = FindAll<User>(database, predicates);
+            return database.Connection.Find<User>(userID);
+        }
 
-            return result.Count() == 0 ? null : result.First();
+        /// <summary>
+        ///     Insert new User.
+        /// </summary>
+        /// <param name="database"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static User AddUser(this Database database, User user)
+        {
+            user.CreatedAt = DateTime.Now;
+            user.UpdatedAt = DateTime.Now;
+
+            database.Connection.Insert(user);
+
+            return user;
+        }
+
+        /// <summary>
+        ///     Update a User.
+        /// </summary>
+        /// <param name="database"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static User UpdateUser(this Database database, User user)
+        {
+            user.UpdatedAt = DateTime.Now;
+
+            database.Connection.Update(user);
+
+            return user;
         }
     }
 }
