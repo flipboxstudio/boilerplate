@@ -3,51 +3,25 @@ using MailKit.Net.Smtp;
 using MailKit;
 using MimeKit;
 using HandlebarsDotNet;
+using System.IO;
+using Microsoft.Extensions.Options;
 
 namespace App.Services
 {
     public class Mailer
     {
         /// <summary>
-        /// Email host.
+        /// Application configuration.
         /// </summary>
-        private readonly string _host;
+        private readonly AppConfig _appConfig;
 
         /// <summary>
-        /// Email port.
+        /// Initialize class.
         /// </summary>
-        private readonly int _port;
-
-        /// <summary>
-        /// Choose whether to use SSL or not.
-        /// </summary>
-        private readonly bool _ssl;
-
-        /// <summary>
-        /// Email authentication: Username
-        /// </summary>
-        private readonly string _username;
-
-        /// <summary>
-        /// Email authentication: Password
-        /// </summary>
-        private readonly string _password;
-
-        /// <summary>
-        /// Initialize basic configuration.
-        /// </summary>
-        /// <param name="host"></param>
-        /// <param name="port"></param>
-        /// <param name="ssl"></param>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        public Mailer(string host, int port, bool ssl, string username, string password)
+        /// <param name="appConfig"></param>
+        public Mailer(IOptions<AppConfig> appConfig)
         {
-            _host = host;
-            _port = port;
-            _ssl = ssl;
-            _username = username;
-            _password = password;
+            _appConfig = appConfig.Value;
         }
 
         /// <summary>
@@ -60,8 +34,8 @@ namespace App.Services
         {
             var message = new MimeMessage();
             var from = new MailboxAddress(
-                AppConfig.MailerName,
-                AppConfig.MailerUser
+                _appConfig.MailerDisplayName,
+                _appConfig.MailerRelayName
             );
 
             // Set "from".
@@ -79,13 +53,31 @@ namespace App.Services
             SendMessage(message);
         }
 
+        /// <summary>
+        /// Sending email using HTML. Template path is in `Resources/Views/Mail`.
+        /// </summary>
+        /// <param name="to"></param>
+        /// <param name="subject"></param>
+        /// <param name="path"></param>
+        /// <param name="data"></param>
         public void SendEmail(MailboxAddress to, string subject, string path, object data)
         {
+            path = Path.Combine(
+                Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "/Resources/Views/Mail"
+                ),
+                path
+            );
+
             var message = new MimeMessage();
             var from = new MailboxAddress(
-                AppConfig.MailerName,
-                AppConfig.MailerUser
+                _appConfig.MailerDisplayName,
+                _appConfig.MailerRelayName
             );
+            var source = System.IO.File.ReadAllText(path);
+            var template = Handlebars.Compile(source);
+            var content = template(data);
 
             // Set "from".
             message.From.Add(from);
@@ -96,16 +88,16 @@ namespace App.Services
             // Set email subject.
             message.Subject = subject;
 
-            var source = System.IO.File.ReadAllText(path);
-            var template = Handlebars.Compile(source);
-            var content = template(data);
-
             // Set email content.
             message.Body = new TextPart("plain") { Text = content };
 
             SendMessage(message);
         }
 
+        /// <summary>
+        /// Sending message via wire.
+        /// </summary>
+        /// <param name="message"></param>
         private void SendMessage (MimeMessage message)
         {
             using (var client = new SmtpClient())
@@ -114,10 +106,10 @@ namespace App.Services
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
 
                 // Connecting to server.
-                client.Connect(_host, _port, _ssl);
+                client.Connect(_appConfig.MailerHost, _appConfig.MailerPort, _appConfig.MailerUseSSL);
 
                 // Authenticate using configured username and password.
-                client.Authenticate(_username, _password);
+                client.Authenticate(_appConfig.MailerUserName, _appConfig.MailerPassword);
 
                 // Sending message
                 client.Send(message);

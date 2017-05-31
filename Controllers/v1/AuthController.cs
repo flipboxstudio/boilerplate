@@ -62,7 +62,7 @@ namespace Boilerplate.Controllers.v1
             _mailer.SendEmail(
                 new MailboxAddress(user.FullName, user.Email),
                 "Welcome to App",
-                Directory.GetCurrentDirectory() + "/Resources/Views/hello.html",
+                "hello.html",
                 new {
                     baseUrl = Url.AbsoluteContent(""),
                     subject = "Welcome to App",
@@ -108,7 +108,7 @@ namespace Boilerplate.Controllers.v1
             _mailer.SendEmail(
                 new MailboxAddress(user.FullName, user.Email),
                 "Password Reset",
-                Directory.GetCurrentDirectory() + "/Resources/Views/password.html",
+                "password.html",
                 new {
                     baseUrl = Url.AbsoluteContent(""),
                     subject = "Password Reset",

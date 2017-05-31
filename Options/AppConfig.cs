@@ -1,17 +1,41 @@
 namespace App.Options
 {
-    public static class AppConfig
+    public class AppConfig
     {
-        public const string AuthIdentifier = "Id";
+        // ---------------- AUTHENTICATION
 
-        public static string MailerUser = "";
+        public string AuthIdentifier { get; set; } = "Id";
 
-        public static string MailerName = "";
+        // ---------------- END OF AUTHENTICATION
 
-        public static string RelativeUploadPath = "";
 
-        public static string FileSystemUploadPath = "";
+        // ---------------- UPLOADER
 
-        public static string Host = "";
+        public string RelativeUploadPath { get; set; } = "";
+
+        public string AbsoluteUploadPath { get; set; } = "";
+
+        public string Host { get; set; } = "";
+
+        // ---------------- END OF UPLOADER
+
+
+        // ---------------- MAILER
+
+        public string MailerHost { get; set; } = "";
+
+        public int MailerPort { get; set; } = 465;
+
+        public bool MailerUseSSL { get; set; } = true;
+
+        public string MailerUserName { get; set; } = "";
+
+        public string MailerPassword { get; set; } = "";
+
+        public string MailerDisplayName { get; set; } = "";
+
+        public string MailerRelayName { get; set; } = "";
+
+        // ---------------- END OF MAILER
     }
 }

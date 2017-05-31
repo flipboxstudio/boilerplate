@@ -26,6 +26,11 @@ namespace App.Services
         private readonly JwtConfig _jwtConfig;
 
         /// <summary>
+        /// Application configuration.
+        /// </summary>
+        private readonly AppConfig _appConfig;
+
+        /// <summary>
         /// User instance.
         /// </summary>
         /// <returns></returns>
@@ -36,10 +41,11 @@ namespace App.Services
         /// </summary>
         /// <param name="database"></param>
         /// <param name="jwtConfig"></param>
-        public Authenticator(Database database, IOptions<JwtConfig> jwtConfig)
+        public Authenticator(Database database, IOptions<JwtConfig> jwtConfig, IOptions<AppConfig> appConfig)
         {
             _database = database;
             _jwtConfig = jwtConfig.Value;
+            _appConfig = appConfig.Value;
         }
 
         /// <summary>
@@ -76,7 +82,7 @@ namespace App.Services
             {
                 new Claim(
                     JwtRegisteredClaimNames.Sub,
-                    claimsIdentity.FindFirst(AppConfig.AuthIdentifier).Value
+                    claimsIdentity.FindFirst(_appConfig.AuthIdentifier).Value
                 ),
                 new Claim(JwtRegisteredClaimNames.Jti, JwtConfig.JtiGenerator()),
                 new Claim(JwtRegisteredClaimNames.Iat,
@@ -116,7 +122,7 @@ namespace App.Services
                 new GenericIdentity(user.Email, "Token"),
                 new[]
                 {
-                    new Claim(AppConfig.AuthIdentifier, user.Id.ToString()),
+                    new Claim(_appConfig.AuthIdentifier, user.Id.ToString()),
                 });
         }
 

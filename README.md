@@ -57,7 +57,6 @@ I made a simple Postman Collection [here](https://www.getpostman.com/collections
 ## TODO
 
 - [ ] Unit test, docs [here](https://docs.microsoft.com/en-us/dotnet/articles/core/testing/unit-testing-with-dotnet-test).
-- [ ] Using options instead of public static property.
 - [ ] Write a blog post about this boilerplate.
 
 ## LICENSE

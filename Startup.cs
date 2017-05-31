@@ -64,16 +64,16 @@ namespace App
                 )
             );
 
-            // Configure JwtIssuerOptions
-            services.Configure<JwtConfig>(options =>
+            // Configure JWTConfiguration.
+            services.Configure<JwtConfig>(jwtConfig =>
             {
                 var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtConfig));
 
-                options.SigningKey = jwtAppSettingOptions[nameof(JwtConfig.SigningKey)];
-                options.Issuer = jwtAppSettingOptions[nameof(JwtConfig.Issuer)];
-                AppConfig.Host = options.Audience = jwtAppSettingOptions[nameof(JwtConfig.Audience)];
-                options.SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(options.SigningKey)),
+                jwtConfig.SigningKey = jwtAppSettingOptions[nameof(JwtConfig.SigningKey)];
+                jwtConfig.Issuer = jwtAppSettingOptions[nameof(JwtConfig.Issuer)];
+                jwtConfig.Audience = jwtAppSettingOptions[nameof(JwtConfig.Audience)];
+                jwtConfig.SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtConfig.SigningKey)),
                     SecurityAlgorithms.HmacSha256
                 );
             });
@@ -84,27 +84,30 @@ namespace App
             // Add authorization middleware.
             services.AddAuthorization();
 
-            // Configure Uploader
-            AppConfig.RelativeUploadPath = Configuration.GetValue<string>("UploadPath");
-            AppConfig.FileSystemUploadPath = string.Format(
-                "{0}/{1}",
-                Directory.GetCurrentDirectory(),
-                AppConfig.RelativeUploadPath
-            );
+            // Configure Application Configuration
+            services.Configure<AppConfig>(appConfig =>
+            {
+                // Configure Mailer
+                var mailerConfiguration = Configuration.GetSection("Mail");
+                appConfig.MailerHost = mailerConfiguration.GetValue<string>("Host");
+                appConfig.MailerPort = mailerConfiguration.GetValue<int>("Port");
+                appConfig.MailerUseSSL = mailerConfiguration.GetValue<bool>("SSL");
+                appConfig.MailerUserName = mailerConfiguration.GetValue<string>("Username");
+                appConfig.MailerDisplayName = mailerConfiguration.GetValue<string>("DisplayName");
+                appConfig.MailerRelayName = mailerConfiguration.GetValue<string>("RelayName");
 
-            // Configure Mailer
-            var mailerConfiguration = Configuration.GetSection("Mail");
-            AppConfig.MailerUser = mailerConfiguration.GetValue<string>("Username");
-            AppConfig.MailerName = mailerConfiguration.GetValue<string>("Name");
-            services.AddSingleton(typeof(Mailer),
-                new Mailer(
-                    mailerConfiguration.GetValue<string>("Host"),
-                    mailerConfiguration.GetValue<int>("Port"),
-                    mailerConfiguration.GetValue<bool>("SSL"),
-                    mailerConfiguration.GetValue<string>("Username"),
-                    mailerConfiguration.GetValue<string>("Password")
-                )
-            );
+                // Configure Uploader
+                var uploaderConfiguration = Configuration.GetSection("Uploader");
+                appConfig.Host = uploaderConfiguration.GetValue<string>("Host");
+                appConfig.RelativeUploadPath = uploaderConfiguration.GetValue<string>("UploadPath");
+                appConfig.AbsoluteUploadPath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    appConfig.RelativeUploadPath
+                );
+            });
+
+            // Add Mailer services.
+            services.AddTransient<Mailer, Mailer>();
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using App.Options;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace App.Services
 {
@@ -14,12 +15,26 @@ namespace App.Services
         private readonly IFormFile _file;
 
         /// <summary>
+        /// Application configuration.
+        /// </summary>
+        private readonly AppConfig _appConfig;
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="file"></param>
         public Uploader(IFormFile file)
         {
             _file = file;
+        }
+
+        /// <summary>
+        /// Application initializer.
+        /// </summary>
+        /// <param name="appConfig"></param>
+        protected Uploader(IOptions<AppConfig> appConfig)
+        {
+            _appConfig = appConfig.Value;
         }
 
         /// <summary>
@@ -30,19 +45,18 @@ namespace App.Services
         /// <returns></returns>
         public string UploadTo(string path, string fileName)
         {
-            var absolutePath = string.Format(
-                "{0}{1}{2}/{3}",
-                AppConfig.Host,
-                AppConfig.RelativeUploadPath.Replace("wwwroot/", ""),
-                path,
+            var url = UrlCombine(
+                UrlCombine(
+                    UrlCombine(
+                        _appConfig.Host,
+                        _appConfig.RelativeUploadPath.Replace("wwwroot/", "")
+                    ),
+                    path
+                ),
                 fileName
             );
-            var fileSystemUploadPath = string.Format(
-                "{0}{1}",
-                AppConfig.FileSystemUploadPath,
-                path
-            );
-            var saveTo = string.Format("{0}/{1}", fileSystemUploadPath, fileName);
+            var fileSystemUploadPath = Path.Combine(_appConfig.AbsoluteUploadPath, path);
+            var saveTo = Path.Combine(fileSystemUploadPath, fileName);
 
             Directory.CreateDirectory(fileSystemUploadPath);
 
@@ -50,7 +64,7 @@ namespace App.Services
             {
                 _file.CopyTo(uploadedStream);
 
-                return absolutePath;
+                return url;
             }
         }
 
@@ -82,6 +96,20 @@ namespace App.Services
                     return stringBuilder.ToString();
                 }
             }
+        }
+
+        /// <summary>
+        /// Combine two URL.
+        /// </summary>
+        /// <param name="url1"></param>
+        /// <param name="url2"></param>
+        /// <returns></returns>
+        private string UrlCombine(string url1, string url2)
+        {
+            url1 = url1.TrimEnd('/');
+            url2 = url2.TrimStart('/');
+
+            return string.Format("{0}/{1}", url1, url2);
         }
     }
 }

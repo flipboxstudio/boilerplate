@@ -42,8 +42,8 @@ namespace App.Services
         /// <returns></returns>
         public static User AddUser(this Database database, User user)
         {
-            user.CreatedAt = DateTime.Now;
-            user.UpdatedAt = DateTime.Now;
+            user.CreatedAt = DateTime.UtcNow;
+            user.UpdatedAt = DateTime.UtcNow;
 
             database.Connection.Insert(user);
 
@@ -58,7 +58,7 @@ namespace App.Services
         /// <returns></returns>
         public static User UpdateUser(this Database database, User user)
         {
-            user.UpdatedAt = DateTime.Now;
+            user.UpdatedAt = DateTime.UtcNow;
 
             database.Connection.Update(user);
 

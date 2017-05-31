@@ -39,11 +39,11 @@ namespace App.Controllers.v1
         public UserAvatarResponse Avatar([FromForm] UserAvatar request)
         {
             this.ValidateRequest();
-            var uploader = new Uploader(request.Avatar);
 
+            var uploader = new Uploader(request.Avatar);
             var user = this.GetCurrentUser();
-            var avatarUploadPath = string.Format("/avatar/{0}", user.Id); // we need this
-            var fileName = string.Format("{0}{1}", uploader.CalculateHashSum(), uploader.GetExtension()); // we need this
+            var avatarUploadPath = Path.Combine("/avatar", user.Id.ToString());
+            var fileName = string.Format("{0}{1}", uploader.CalculateHashSum(), uploader.GetExtension());
 
             user.Avatar = uploader.UploadTo(avatarUploadPath, fileName);
 
