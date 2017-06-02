@@ -39,7 +39,6 @@ namespace App.Response.v1
         [JsonProperty("expires_in")]
         public int ExpiresIn { get; set; }
 
-        [JsonProperty("user")]
         public User User { get; set; }
     }
 }

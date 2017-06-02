@@ -93,8 +93,8 @@ namespace App.Middlewares
         {
             var data = new Dictionary<string, object>
             {
-                {"message", exception.Message},
-                {"error", exception.Data}
+                { "message", exception.Message },
+                { "error", exception.Data }
             };
 
             if (!_env.IsDevelopment()) return data;
@@ -113,7 +113,7 @@ namespace App.Middlewares
         {
             return exception.StackTrace
                 .Split(new[] {"\r\n", "\n"}, StringSplitOptions.None)
-                .Select(p => p.Trim())
+                .Select(traceLine => traceLine.Trim())
                 .ToList();
         }
     }

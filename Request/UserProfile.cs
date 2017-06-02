@@ -8,7 +8,6 @@ namespace App.Request
     public class UserProfile
     {
         [Required]
-        [JsonProperty("email")]
         [Unique("Users", "email", false, ErrorMessage = "Email has been taken.")]
         public string Email { get; set; }
 
@@ -18,7 +17,6 @@ namespace App.Request
         [JsonProperty("nick_name")]
         public string NickName { get; set; }
 
-        [JsonProperty("phone")]
         public string Phone { get; set; }
     }
 }

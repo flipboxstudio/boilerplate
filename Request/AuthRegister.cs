@@ -8,7 +8,6 @@ namespace App.Request
     public class AuthRegister
     {
         [Required]
-        [JsonProperty("email")]
         [Unique("Users", "email", ErrorMessage = "Email has been taken.")]
         public string Email { get; set; }
 
@@ -34,7 +33,6 @@ namespace App.Request
             }
         }
 
-        [JsonProperty("phone")]
         public string Phone { get; set; }
     }
 }

@@ -89,7 +89,7 @@ namespace App.Services
             message.Subject = subject;
 
             // Set email content.
-            message.Body = new TextPart("plain") { Text = content };
+            message.Body = new TextPart("html") { Text = content };
 
             SendMessage(message);
         }
