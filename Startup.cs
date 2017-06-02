@@ -60,18 +60,18 @@ namespace App
             var databaseConfiguration = Configuration.GetSection("Database").GetSection("Default");
             services.AddSingleton(typeof(Database),
                 new Database(
-                    databaseConfiguration["ConnectionString"]
+                    databaseConfiguration.GetValue<string>("ConnectionString")
                 )
             );
 
             // Configure JWTConfiguration.
             services.Configure<JwtConfig>(jwtConfig =>
             {
-                var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtConfig));
+                var jwtAppSettingOptions = Configuration.GetSection("JwtConfig");
 
-                jwtConfig.SigningKey = jwtAppSettingOptions[nameof(JwtConfig.SigningKey)];
-                jwtConfig.Issuer = jwtAppSettingOptions[nameof(JwtConfig.Issuer)];
-                jwtConfig.Audience = jwtAppSettingOptions[nameof(JwtConfig.Audience)];
+                jwtConfig.SigningKey = jwtAppSettingOptions.GetValue<string>("SigningKey");
+                jwtConfig.Issuer = jwtAppSettingOptions.GetValue<string>("Issuer");
+                jwtConfig.Audience = jwtAppSettingOptions.GetValue<string>("Audience");
                 jwtConfig.SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtConfig.SigningKey)),
                     SecurityAlgorithms.HmacSha256

@@ -18,9 +18,12 @@ namespace App.Services
         /// <returns></returns>
         public static User FindUserByEmail(this Database database, string email)
         {
-            var result = database.Connection.GetRange<User>("WHERE Email = @email", new { email });
+            using(var connection = database.Connection)
+            {
+                var result = connection.GetRange<User>("WHERE Email = @email", new { email });
 
-            return result.Count() == 0 ? null : result.First();
+                return result.Count() == 0 ? null : result.First();
+            }
         }
 
         /// <summary>
@@ -42,12 +45,15 @@ namespace App.Services
         /// <returns></returns>
         public static User AddUser(this Database database, User user)
         {
-            user.CreatedAt = DateTime.UtcNow;
-            user.UpdatedAt = DateTime.UtcNow;
+            using(var connection = database.Connection)
+            {
+                user.CreatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow;
 
-            database.Connection.Insert(user);
+                connection.Insert(user);
 
-            return user;
+                return user;
+            }
         }
 
         /// <summary>
@@ -58,11 +64,14 @@ namespace App.Services
         /// <returns></returns>
         public static User UpdateUser(this Database database, User user)
         {
-            user.UpdatedAt = DateTime.UtcNow;
+            using(var connection = database.Connection)
+            {
+                user.UpdatedAt = DateTime.UtcNow;
 
-            database.Connection.Update(user);
+                connection.Update(user);
 
-            return user;
+                return user;
+            }
         }
     }
 }
