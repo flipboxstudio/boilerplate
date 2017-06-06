@@ -1,5 +1,10 @@
 namespace App.Options
 {
+    // TODO: Separate section to each class.
+
+    /// <summary>
+    /// Application config.
+    /// </summary>
     public class AppConfig
     {
         // ---------------- AUTHENTICATION
@@ -79,6 +84,12 @@ namespace App.Options
         /// </summary>
         /// <returns></returns>
         public string MailerRelayName { get; set; } = "";
+
+        /// <summary>
+        /// Email template path.
+        /// </summary>
+        /// <returns></returns>
+        public string MailterTemplatePath { get; set; } = "";
 
         // ---------------- END OF MAILER
     }

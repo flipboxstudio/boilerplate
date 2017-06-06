@@ -25,35 +25,6 @@ namespace App.Services
         }
 
         /// <summary>
-        /// Send email to user, with given subject and plain text content.
-        /// </summary>
-        /// <param name="to"></param>
-        /// <param name="subject"></param>
-        /// <param name="content"></param>
-        public void SendEmail(MailboxAddress to, string subject, TextPart content)
-        {
-            var message = new MimeMessage();
-            var from = new MailboxAddress(
-                _appConfig.MailerDisplayName,
-                _appConfig.MailerRelayName
-            );
-
-            // Set "from".
-            message.From.Add(from);
-
-            // Set recipient.
-            message.To.Add(to);
-
-            // Set email subject.
-            message.Subject = subject;
-
-            // Set email content.
-            message.Body = content;
-
-            SendMessage(message);
-        }
-
-        /// <summary>
         /// Sending email using HTML. Template path is in `Resources/Views/Mail`.
         /// </summary>
         /// <param name="to"></param>
@@ -62,22 +33,9 @@ namespace App.Services
         /// <param name="data"></param>
         public void SendEmail(MailboxAddress to, string subject, string path, object data)
         {
-            path = Path.Combine(
-                Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "/Resources/Views/Mail"
-                ),
-                path
-            );
-
             var message = new MimeMessage();
-            var from = new MailboxAddress(
-                _appConfig.MailerDisplayName,
-                _appConfig.MailerRelayName
-            );
-            var source = System.IO.File.ReadAllText(path);
-            var template = Handlebars.Compile(source);
-            var content = template(data);
+            var from = new MailboxAddress(_appConfig.MailerDisplayName, _appConfig.MailerRelayName);
+            var content = CompileTemplate(path, data);
 
             // Set "from".
             message.From.Add(from);
@@ -92,6 +50,22 @@ namespace App.Services
             message.Body = new TextPart("html") { Text = content };
 
             SendMessage(message);
+        }
+
+        /// <summary>
+        /// Compile email template.
+        /// </summary>
+        /// <param name="relativePath"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private string CompileTemplate(string relativePath, object data)
+        {
+            var absolutePath = Path.Combine(_appConfig.MailterTemplatePath, relativePath);
+            var source = System.IO.File.ReadAllText(absolutePath);
+            var template = Handlebars.Compile(source);
+            var content = template(data);
+
+            return content;
         }
 
         /// <summary>

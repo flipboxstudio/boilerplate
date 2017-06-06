@@ -95,6 +95,10 @@ namespace App
                 appConfig.MailerUserName = mailerConfiguration.GetValue<string>("Username");
                 appConfig.MailerDisplayName = mailerConfiguration.GetValue<string>("DisplayName");
                 appConfig.MailerRelayName = mailerConfiguration.GetValue<string>("RelayName");
+                appConfig.MailterTemplatePath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    mailerConfiguration.GetValue<string>("TemplatePath")
+                );
 
                 // Configure Uploader
                 var uploaderConfiguration = Configuration.GetSection("Uploader");
