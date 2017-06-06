@@ -64,7 +64,6 @@ namespace Boilerplate.Controllers.v1
                 "Welcome to App",
                 "hello.html",
                 new {
-                    baseUrl = Url.AbsoluteContent(""),
                     subject = "Welcome to App",
                     nickName = user.NickName
                 }
@@ -114,7 +113,6 @@ namespace Boilerplate.Controllers.v1
                 "Password Reset",
                 "password.html",
                 new {
-                    baseUrl = Url.AbsoluteContent(""),
                     subject = "Password Reset",
                     newPassword
                 }

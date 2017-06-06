@@ -13,6 +13,10 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using System.IO;
+using HandlebarsDotNet;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace App
 {
@@ -112,6 +116,9 @@ namespace App
 
             // Add Mailer services.
             services.AddTransient<Mailer, Mailer>();
+
+            // Hahahaha >:D
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         /// <summary>
@@ -161,6 +168,21 @@ namespace App
 
             app.UseJwtBearerAuthentication(jwtBearerOptions);
             // End of JWT
+
+            // TODO: Move this into somewhere but here.
+            Handlebars.RegisterHelper("asset", (writer, context, parameters) => {
+                var path = parameters[0]?.ToString() ?? "";
+                var httpContextAccessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
+                var request = httpContextAccessor.HttpContext.Request;
+                var absoluteUri = string.Concat(
+                        request.Scheme,
+                        "://",
+                        request.Host.ToUriComponent(),
+                        request.PathBase.ToUriComponent()
+                );
+
+                writer.WriteSafeString(string.Concat(absoluteUri, path));
+            });
 
             app.UseMvc();
         }
