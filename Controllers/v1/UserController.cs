@@ -43,13 +43,13 @@ namespace App.Controllers.v1
             var uploader = new Uploader(request.Avatar);
             var user = this.GetCurrentUser();
             var avatarUploadPath = Path.Combine("/avatar", user.Id.ToString());
-            var fileName = string.Format("{0}{1}", uploader.CalculateHashSum(), uploader.GetExtension());
 
-            user.Avatar = uploader.UploadTo(avatarUploadPath, fileName);
+            user.Avatar = uploader.UploadTo(avatarUploadPath);
 
             _database.UpdateUser(user);
 
-            return new UserAvatarResponse {
+            return new UserAvatarResponse
+            {
                 Message = "OK",
                 Data = user
             };
@@ -65,16 +65,13 @@ namespace App.Controllers.v1
         {
             this.ValidateRequest();
 
-            var user = this.GetCurrentUser();
-
-            user.FullName = request.FullName;
-            user.NickName = request.NickName;
-            user.Email = request.Email;
-            user.Phone = request.FullName;
+            var user = this.GetCurrentUser()
+                           .UpdateFromRequest(request);
 
             _database.UpdateUser(user);
 
-            return new UserProfileResponse {
+            return new UserProfileResponse
+            {
                 Message = "OK",
                 Data = user
             };
@@ -90,14 +87,13 @@ namespace App.Controllers.v1
         {
             this.ValidateRequest();
 
-            var user = this.GetCurrentUser();
-
-            user.Password = HashPassword(request.NewPassword);
-            user.NeedToChangePassword = false;
+            var user = this.GetCurrentUser()
+                           .ChangePassword(request.NewPassword);
 
             _database.UpdateUser(user);
 
-            return new UserPasswordResponse {
+            return new UserPasswordResponse
+            {
                 Message = "OK",
                 Data = user
             };

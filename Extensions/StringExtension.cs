@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Globalization;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace System
@@ -13,17 +14,12 @@ namespace System
         public static string CalculateMD5(this string input)
         {
             // step 1, calculate MD5 hash from input
-
             var md5 = MD5.Create();
-
             var inputBytes = Encoding.ASCII.GetBytes(input);
-
             var hash = md5.ComputeHash(inputBytes);
 
             // step 2, convert byte array to hex string
-
             var StringBuilder = new StringBuilder();
-
             foreach (var character in hash)
                 StringBuilder.Append(character.ToString("X2"));
 
@@ -41,14 +37,16 @@ namespace System
         }
 
         /// <summary>
-        /// Generate random string.
+        /// Randomize a string or generate a random string.
         /// </summary>
         /// <param name="input"></param>
         /// <param name="length"></param>
         /// <returns></returns>
         public static string Random(this string input, int length)
         {
-            const string libraries = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            var libraries = string.IsNullOrEmpty(input)
+                ? "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+                : input;
 
             var result = new StringBuilder();
             var random = new Random();
@@ -59,6 +57,28 @@ namespace System
             }
 
             return result.ToString();
+        }
+
+        /// <summary>
+        /// Parse a string to a DateTime.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public static DateTime ToDateTime(this string input, string format = "s")
+        {
+            return DateTime.ParseExact(input, format, CultureInfo.CurrentCulture);
+        }
+
+        /// <summary>
+        /// Format a string.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static string Format(this string input, params object[] args)
+        {
+            return string.Format(input, args);
         }
     }
 }

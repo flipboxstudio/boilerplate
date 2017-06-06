@@ -1,4 +1,6 @@
-﻿namespace Microsoft.AspNetCore.Http
+﻿using Microsoft.Extensions.Primitives;
+
+namespace Microsoft.AspNetCore.Http
 {
     public static class RequestExtension
     {
@@ -9,7 +11,13 @@
         /// <returns></returns>
         public static string GetBearerToken(this HttpRequest request)
         {
-            return request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var header = new StringValues();
+
+            if (! request.Headers.TryGetValue("Authorization", out header)) {
+                return "";
+            }
+
+            return header.ToString().Replace("Bearer ", "");
         }
     }
 }

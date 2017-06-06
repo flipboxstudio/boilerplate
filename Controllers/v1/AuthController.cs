@@ -1,12 +1,11 @@
 using App.Response.v1;
 using App.Request;
 using App.Services;
-using static BCrypt.Net.BCrypt;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using MimeKit;
-using System.IO;
+using UserModel = App.Model.User;
 
 namespace Boilerplate.Controllers.v1
 {
@@ -59,6 +58,7 @@ namespace Boilerplate.Controllers.v1
             var user = _database.AddUser(
                 App.Model.User.CreateFromRequest(request)
             );
+
             _mailer.SendEmail(
                 new MailboxAddress(user.FullName, user.Email),
                 "Welcome to App",
@@ -70,7 +70,8 @@ namespace Boilerplate.Controllers.v1
                 }
             );
 
-            return new Registered {
+            return new Registered
+            {
                 Message = "OK",
                 Data = user
             };
@@ -102,8 +103,11 @@ namespace Boilerplate.Controllers.v1
         [HttpPost("forgot", Name = "v1.auth.forgot")]
         public Forgot Forgot([FromBody] AuthForgot request)
         {
-            var user = _database.FindUserByEmail(request.Email);
+            this.ValidateRequest();
+
             var newPassword = "".Random(8);
+            var user = _database.FindUserByEmail(request.Email)
+                                .Forgot(newPassword);
 
             _mailer.SendEmail(
                 new MailboxAddress(user.FullName, user.Email),
@@ -116,12 +120,10 @@ namespace Boilerplate.Controllers.v1
                 }
             );
 
-            user.Password = HashPassword(newPassword);
-            user.NeedToChangePassword = true;
+            user = _database.UpdateUser(user);
 
-            _database.UpdateUser(user);
-
-            return new Forgot {
+            return new Forgot
+            {
                 Message = "OK",
                 Data = user
             };

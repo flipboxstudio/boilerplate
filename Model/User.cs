@@ -1,6 +1,7 @@
 using System;
 using Newtonsoft.Json;
 using App.Request;
+using static BCrypt.Net.BCrypt;
 
 namespace App.Model
 {
@@ -27,6 +28,11 @@ namespace App.Model
 
         public DateTime? UpdatedAt { get; set; }
 
+        /// <summary>
+        /// Create new instance from request.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public static User CreateFromRequest(AuthRegister request)
         {
             return new User {
@@ -37,6 +43,47 @@ namespace App.Model
                 Phone = request.Phone,
                 Avatar = string.Format("https://www.gravatar.com/avatar/{0}", request.Email.CalculateMD5())
             };
+        }
+
+        /// <summary>
+        /// Update user profile from request.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public User UpdateFromRequest(UserProfile request)
+        {
+            FullName = request.FullName;
+            NickName = request.NickName;
+            Email = request.Email;
+            Phone = request.FullName;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Forgot a user password.
+        /// </summary>
+        /// <param name="plainPassword"></param>
+        /// <returns></returns>
+        public User Forgot(string plainPassword)
+        {
+            Password = HashPassword(plainPassword);
+            NeedToChangePassword = true;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Change a user password.
+        /// </summary>
+        /// <param name="plainPassword"></param>
+        /// <returns></returns>
+        public User ChangePassword(string plainPassword)
+        {
+            Password = HashPassword(plainPassword);
+            NeedToChangePassword = false;
+
+            return this;
         }
     }
 }

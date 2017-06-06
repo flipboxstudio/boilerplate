@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -43,8 +44,9 @@ namespace App.Services
         /// <param name="path"></param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public string UploadTo(string path, string fileName)
+        public string UploadTo(string path, string fileName = null)
         {
+            fileName = string.IsNullOrEmpty(fileName) ? GenerateFileName() : fileName;
             var url = UrlCombine(
                 UrlCombine(
                     UrlCombine(
@@ -69,6 +71,15 @@ namespace App.Services
         }
 
         /// <summary>
+        /// Upload to root with generated filename.
+        /// </summary>
+        /// <returns></returns>
+        public string Upload()
+        {
+            return UploadTo("/", GenerateFileName());
+        }
+
+        /// <summary>
         /// Get extension from file.
         /// </summary>
         /// <returns></returns>
@@ -77,6 +88,18 @@ namespace App.Services
             var fileInfo = new FileInfo(_file.FileName);
 
             return fileInfo.Extension;
+        }
+
+        /// <summary>
+        /// Generate filename from MD5 and it's extension.
+        /// </summary>
+        /// <returns></returns>
+        public string GenerateFileName()
+        {
+            return "{0}{1}".Format(new [] {
+                CalculateHashSum(),
+                GetExtension()
+            });
         }
 
         /// <summary>
