@@ -2,6 +2,7 @@ using App.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using App.Response.v1;
 
 namespace App.Controllers
 {
@@ -14,9 +15,9 @@ namespace App.Controllers
         /// <returns></returns>
         [HttpGet]
         [AllowAnonymous]
-        public Success Get()
+        public Hello Get()
         {
-            return new Success
+            return new Hello
             {
                 Message = "You have arrived."
             };

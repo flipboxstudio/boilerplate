@@ -1,0 +1,9 @@
+{
+    "protoc": {
+        "path": "C:\\Users\\Krisan Alfa Timur\\Downloads\\protoc-3.3.0-win32\\bin\\protoc",
+        "options": [
+            "--proto_path=Response\\ProtoFiles",
+            "--csharp_out=Response\\v1"
+        ]
+    }
+}

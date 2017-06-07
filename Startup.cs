@@ -60,6 +60,12 @@ namespace App
                 option.SerializerSettings.ContractResolver = new AppContractResolver();
             });
 
+            // Formatter
+            services.Configure<MvcOptions>(options => {
+                options.InputFormatters.Add(new ProtobufInputFormatter());
+                options.OutputFormatters.Add(new ProtobufOutputFormatter());
+            });
+
             // Configure Database
             var databaseConfiguration = Configuration.GetSection("Database").GetSection("Default");
             services.AddSingleton(typeof(Database),

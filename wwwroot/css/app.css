@@ -117,15 +117,6 @@ th.column {
   th.column .columns {
     padding-left: 0 !important;
     padding-right: 0 !important; }
-    td.columns .column center,
-    td.columns .columns center,
-    td.column .column center,
-    td.column .columns center,
-    th.columns .column center,
-    th.columns .columns center,
-    th.column .column center,
-    th.column .columns center {
-      min-width: none !important; }
 
 td.columns.last,
 td.column.last,

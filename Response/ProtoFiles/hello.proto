@@ -1,0 +1,7 @@
+syntax = "proto3";
+package app;
+option csharp_namespace = "App.Response.v1";
+
+message Hello {
+    string message = 1;
+}
