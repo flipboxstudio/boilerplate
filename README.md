@@ -15,7 +15,7 @@ This is a dead simple boilerplate to build Restful API using .NET Core.
 - Static assets provider.
 - Mailer.
 - Need HTML template engine? Don't worry. We have HandleBars!
-- Protobuff 3 for Input and Output.
+- Protobuf 3 for Input and Output. (output available at root endpoint, try sending using `Accept: application/x-protobuf`)
 - More to come :)
 
 ## Quick Start
@@ -59,6 +59,7 @@ I made a simple Postman Collection [here](https://www.getpostman.com/collections
 
 - [ ] Unit test, docs [here](https://docs.microsoft.com/en-us/dotnet/articles/core/testing/unit-testing-with-dotnet-test).
 - [ ] Write a blog post about this boilerplate.
+- [ ] Write protobuf example for all endpoint.
 
 ## LICENSE
 

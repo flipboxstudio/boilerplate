@@ -11,6 +11,11 @@ namespace App.Services
 {
     public class ProtobufOutputFormatter : OutputFormatter
     {
+        /// <summary>
+        /// Determine if current request wants protobuf.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override bool CanWriteResult(OutputFormatterCanWriteContext context)
         {
             if (context.Object == null || !context.ContentType.Equals(new StringSegment("application/x-protobuf")))
@@ -25,6 +30,11 @@ namespace App.Services
                 .Any(type => type.GetGenericTypeDefinition() == typeof(IMessage<>));
         }
 
+        /// <summary>
+        /// Write protobuf response to client.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
         {
             var response = context.HttpContext.Response;
