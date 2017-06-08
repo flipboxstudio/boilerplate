@@ -22,6 +22,8 @@ namespace App
 {
     public class Startup
     {
+        public IConfigurationRoot Configuration { get; }
+
         /// <summary>
         /// Class constructor.
         /// </summary>
@@ -31,13 +33,11 @@ namespace App
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true)
+                .AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: env.IsDevelopment())
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
         }
-
-        public IConfigurationRoot Configuration { get; }
 
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
@@ -60,17 +60,19 @@ namespace App
                 option.SerializerSettings.ContractResolver = new AppContractResolver();
             });
 
-            // Formatter
+            // Protobuf Formatter
             services.Configure<MvcOptions>(options => {
                 options.InputFormatters.Add(new ProtobufInputFormatter());
                 options.OutputFormatters.Add(new ProtobufOutputFormatter());
             });
 
             // Configure Database
-            var databaseConfiguration = Configuration.GetSection("Database").GetSection("Default");
+            var databaseConfiguration = Configuration.GetSection("Database");
+            var defaultEngine = databaseConfiguration.GetValue<string>("Engine");
+            var engineConfiguration = databaseConfiguration.GetSection("Connections").GetSection(defaultEngine);
             services.AddSingleton(typeof(Database),
                 new Database(
-                    databaseConfiguration.GetValue<string>("ConnectionString")
+                    engineConfiguration.GetValue<string>("ConnectionString")
                 )
             );
 
