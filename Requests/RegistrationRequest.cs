@@ -17,7 +17,6 @@ namespace App.Requests
         /// </summary>
         /// <returns></returns>
         [Required]
-        [StringLength(maximumLength: 100, MinimumLength = 6)]
         public string Password { get; set; }
     }
 }

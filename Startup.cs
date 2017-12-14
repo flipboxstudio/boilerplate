@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace App
@@ -49,6 +50,10 @@ namespace App
                 .AddJsonOptions(options => {
                     // ===== Use camel case =====
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    };
                 });
 
             // ===== Add CORS service =====

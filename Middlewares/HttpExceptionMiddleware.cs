@@ -6,16 +6,13 @@ namespace App.Middlewares
 {
     internal class HttpExceptionMiddleware
     {
-        private readonly RequestDelegate _next;
+        private readonly RequestDelegate next;
 
         /// <summary>
         /// Class constructor.
         /// </summary>
         /// <param name="next"></param>
-        public HttpExceptionMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
+        public HttpExceptionMiddleware(RequestDelegate next) => this.next = next;
 
         /// <summary>
         /// Invoke the middleware.
@@ -26,14 +23,12 @@ namespace App.Middlewares
         {
             try
             {
-                await _next.Invoke(context);
+                await next.Invoke(context);
             }
             catch (HttpException httpException)
             {
                 context.Response.StatusCode = httpException.HttpStatusCode;
-
-                if (httpException.ContentType != null)
-                    context.Response.ContentType = httpException.ContentType;
+                context.Response.ContentType = httpException.ContentType;
 
                 await context.Response.WriteAsync(httpException.Content ?? httpException.Message);
             }

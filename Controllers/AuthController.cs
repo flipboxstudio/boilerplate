@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -21,6 +22,18 @@ namespace App.Controllers
         private readonly TokenGenerator _tokenGenerator;
 
         private readonly UserManager<ApplicationUser> _userManager;
+
+        private static readonly Dictionary<int, string> _messages = new Dictionary<int, string>
+        {
+            { 101, "Authentication success." },
+            { 102, "Your account has been locked out." },
+            { 103, "You are not allowed to log in to this service." },
+            { 104, "Two Factor Authentication is required to log in to this service." },
+            { 105, "Wrong email and / or password." },
+            { 106, "Registration success." },
+            { 107, "Registration failure." },
+            { 108, "Authorized." },
+        };
 
         /// <summary>
         /// Class constructor.
@@ -48,24 +61,54 @@ namespace App.Controllers
         [ValidateRequest]
         public async Task<object> Login([FromBody] AuthenticationRequest request)
         {
+            var status = 101;
             var result = await _signInManager.PasswordSignInAsync(
                 userName: request.Email,
                 password: request.Password,
                 isPersistent: false,
-                lockoutOnFailure: false
+                lockoutOnFailure: true
             );
 
-            if (!result.Succeeded)
-                throw new HttpException(HttpStatusCode.BadRequest)
+            if (result.Succeeded)
+            {
+                var user = _userManager.Users.SingleOrDefault(record => record.Email == request.Email);
+
+                return new
                 {
-                    Content = JsonConvert.SerializeObject(new {
-                        Message = "Wrong email and/or password."
-                    })
+                    Message = _messages[status],
+                    Status = status,
+                    Data = new
+                    {
+                        Token = _tokenGenerator.GenerateToken(user)
+                    }
                 };
+            }
 
-            var user = _userManager.Users.SingleOrDefault(record => record.Email == request.Email);
+            if (result.IsLockedOut)
+            {
+                status = 102;
+            }
+            else if (result.IsNotAllowed)
+            {
+                status = 103;
+            }
+            else if (result.RequiresTwoFactor)
+            {
+                status = 104;
+            }
+            else
+            {
+                status = 105;
+            }
 
-            return new { Token = _tokenGenerator.GenerateToken(user) };
+            throw new HttpException(HttpStatusCode.BadRequest)
+            {
+                Content = JsonConvert.SerializeObject(new
+                {
+                    Message = _messages[status],
+                    Status = status
+                })
+            };
         }
 
         /// <summary>
@@ -77,23 +120,34 @@ namespace App.Controllers
         [ValidateRequest]
         public async Task<object> Register([FromBody] RegistrationRequest request)
         {
-            var user = new ApplicationUser
-            {
-                UserName = request.Email,
-                Email = request.Email
-            };
-
+            var status = 106;
+            var user = new ApplicationUser { UserName = request.Email, Email = request.Email };
             var result = await _userManager.CreateAsync(user: user, password: request.Password);
 
             if (!result.Succeeded)
+            {
+                status = 107;
+
                 throw new HttpException(HttpStatusCode.BadRequest)
                 {
-                    Content = JsonConvert.SerializeObject(new { Errors = result.Errors }),
+                    Content = JsonConvert.SerializeObject(new
+                    {
+                        Message = _messages[status],
+                        Status = status,
+                        Errors = result.Errors
+                    }),
                 };
+            }
 
             await _signInManager.SignInAsync(user: user, isPersistent: false);
 
-            return new { Token = _tokenGenerator.GenerateToken(user) };
+            return new {
+                Message = _messages[status],
+                Status = status,
+                Data = new {
+                    Token = _tokenGenerator.GenerateToken(user)
+                }
+            };
         }
 
         /// <summary>
@@ -102,9 +156,14 @@ namespace App.Controllers
         /// <returns></returns>
         [HttpGet]
         [Authorize]
-        public async Task<ApplicationUser> Account()
+        public async Task<object> Account() => new
         {
-            return await _userManager.GetUserAsync(User);
-        }
+            Message = _messages[108],
+            Status = 108,
+            Data = new
+            {
+                Account = await _userManager.GetUserAsync(User)
+            },
+        };
     }
 }

@@ -11,16 +11,13 @@ namespace App.Services.Auth
 {
     public class TokenGenerator
     {
-        private readonly AppSettings _settings;
+        private readonly AppSettings appSettings;
 
         /// <summary>
         /// Class constructor.
         /// </summary>
         /// <param name="settings"></param>
-        public TokenGenerator(IOptions<AppSettings> settings)
-        {
-            _settings = settings.Value;
-        }
+        public TokenGenerator(IOptions<AppSettings> settings) => appSettings = settings.Value;
 
         /// <summary>
         /// Generate JWT.
@@ -31,16 +28,20 @@ namespace App.Services.Auth
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.PrimarySid, user.Id.ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.PrimarySid, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.UserName),
             };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Jwt.Key));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.Jwt.Key));
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(_settings.Jwt.ExpiryDays);
+            var expires = DateTime.Now.AddDays(appSettings.Jwt.ExpiryDays);
             var token = new JwtSecurityToken(
-                issuer: _settings.Jwt.Issuer,
-                audience: _settings.Jwt.Issuer,
+                issuer: appSettings.Jwt.Issuer,
+                audience: appSettings.Jwt.Issuer,
                 claims: claims,
                 expires: expires,
                 signingCredentials: signingCredentials

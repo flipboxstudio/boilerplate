@@ -11,19 +11,13 @@ namespace App.Exceptions
         /// Class constructor.
         /// </summary>
         /// <param name="httpStatusCode"></param>
-        public HttpException(int httpStatusCode)
-        {
-            this.httpStatusCode = httpStatusCode;
-        }
+        public HttpException(int httpStatusCode) => this.httpStatusCode = httpStatusCode;
 
         /// <summary>
         /// Class constructor.
         /// </summary>
         /// <param name="httpStatusCode"></param>
-        public HttpException(HttpStatusCode httpStatusCode)
-        {
-            this.httpStatusCode = (int) httpStatusCode;
-        }
+        public HttpException(HttpStatusCode httpStatusCode) => this.httpStatusCode = (int)httpStatusCode;
 
         /// <summary>
         /// HTTP status code.
@@ -35,7 +29,7 @@ namespace App.Exceptions
         /// Response content.
         /// </summary>
         /// <returns></returns>
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
 
         /// <summary>
         /// Response content type.

@@ -12,11 +12,10 @@ namespace App.Controllers
         [HttpGet]
         [Route("")]
         [AllowAnonymous]
-        public object Index()
+        public object Index() => new
         {
-            return new {
-                Message = "OK"
-            };
-        }
+            Message = "OK.",
+            Status = 1,
+        };
     }
 }
