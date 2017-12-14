@@ -26,16 +26,7 @@ namespace App.Services.Auth
         /// <returns></returns>
         public string GenerateToken(ApplicationUser user)
         {
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.PrimarySid, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
-            };
+            var claims = GenerateClaims(user);
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.Jwt.Key));
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddDays(appSettings.Jwt.ExpiryDays);
@@ -49,5 +40,16 @@ namespace App.Services.Auth
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        private static List<Claim> GenerateClaims(ApplicationUser user) => new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.PrimarySid, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.UserName),
+            };
     }
 }
