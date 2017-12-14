@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Serialization;
 
 namespace App
 {
@@ -45,7 +45,11 @@ namespace App
             services.AddAuthentication(serviceProvider);
 
             // ===== Add MVC service =====
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(options => {
+                    // ===== Use camel case =====
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
 
             // ===== Add CORS service =====
             services.AddCors(options => {

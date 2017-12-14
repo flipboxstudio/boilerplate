@@ -29,15 +29,27 @@ namespace Microsoft.Extensions.DependencyInjection
             var appSettings = serviceProvider.GetService<IOptions<AppSettings>>().Value;
 
             // ===== Add Identity =====
-            serviceCollection.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            serviceCollection.AddIdentity<ApplicationUser, ApplicationRole>(options => {
+                // User settings
+                options.User.RequireUniqueEmail = true;
 
-            // ===== Configure Identity =====
-            serviceCollection.Configure<IdentityOptions>(options =>
-            {
-                //
-            });
+                // ===== Password Settings =====
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequiredUniqueChars = 1;
+
+                // ===== Lockout settings =====
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+
+                // ===== Signin settings =====
+                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
+            }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
             // ===== Add Jwt Authentication =====
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace JWT.Controllers
+namespace App.Controllers
 {
     [Route("[controller]/[action]")]
     public class AuthController : Controller
@@ -58,7 +58,9 @@ namespace JWT.Controllers
             if (!result.Succeeded)
                 throw new HttpException(HttpStatusCode.BadRequest)
                 {
-                    Content = JsonConvert.SerializeObject(new { Message = "Wrong email and/or password." })
+                    Content = JsonConvert.SerializeObject(new {
+                        Message = "Wrong email and/or password."
+                    })
                 };
 
             var user = _userManager.Users.SingleOrDefault(record => record.Email == request.Email);
@@ -84,7 +86,7 @@ namespace JWT.Controllers
             var result = await _userManager.CreateAsync(user: user, password: request.Password);
 
             if (!result.Succeeded)
-                throw new HttpException(HttpStatusCode.InternalServerError)
+                throw new HttpException(HttpStatusCode.BadRequest)
                 {
                     Content = JsonConvert.SerializeObject(new { Errors = result.Errors }),
                 };
