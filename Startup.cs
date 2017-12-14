@@ -1,42 +1,28 @@
-using System;
-using System.Text;
-using App.Services;
-using App.Options;
-using App.Middlewares;
-using Microsoft.AspNetCore.Authorization;
+﻿using App.Middlewares;
+using App.Services.Db;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Serialization;
-using System.IO;
-using HandlebarsDotNet;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace App
 {
     public class Startup
     {
-        public IConfigurationRoot Configuration { get; }
+        /// <summary>
+        /// Application configuration.
+        /// </summary>
+        /// <returns></returns>
+        private IConfiguration _configuration;
 
         /// <summary>
         /// Class constructor.
         /// </summary>
-        /// <param name="env"></param>
-        public Startup(IHostingEnvironment env)
+        /// <param name="configuration"></param>
+        public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: env.IsDevelopment())
-                .AddEnvironmentVariables();
-
-            Configuration = builder.Build();
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -45,88 +31,21 @@ namespace App
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add options
-            services.AddOptions();
+            // ===== Strongly typed application settings =====
+            services.AddSingleton<IConfiguration>(_configuration);
+            services.Configure<AppSettings>(_configuration.GetSection("AppSettings"));
 
-            // Add framework services.
-            services.AddMvc(config =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-                config.Filters.Add(new AuthorizeFilter(policy));
-            }).AddJsonOptions(option =>
-            {
-                option.SerializerSettings.ContractResolver = new AppContractResolver();
-            });
+            // ===== Build the intermediate service provider =====
+            var serviceProvider = services.BuildServiceProvider();
 
-            // Protobuf Formatter
-            services.Configure<MvcOptions>(options => {
-                options.InputFormatters.Add(new ProtobufInputFormatter());
-                options.OutputFormatters.Add(new ProtobufOutputFormatter());
-            });
+            // ===== Add database service =====
+            services.AddDatabase(serviceProvider);
 
-            // Configure Database
-            var databaseConfiguration = Configuration.GetSection("Database");
-            var defaultEngine = databaseConfiguration.GetValue<string>("Engine");
-            var engineConfiguration = databaseConfiguration.GetSection("Connections").GetSection(defaultEngine);
-            services.AddSingleton(typeof(Database),
-                new Database(
-                    engineConfiguration.GetValue<string>("ConnectionString")
-                )
-            );
+            // ===== Add authentication service =====
+            services.AddAuthentication(serviceProvider);
 
-            // Configure JWTConfiguration.
-            services.Configure<JwtConfig>(jwtConfig =>
-            {
-                var jwtAppSettingOptions = Configuration.GetSection("JwtConfig");
-
-                jwtConfig.SigningKey = jwtAppSettingOptions.GetValue<string>("SigningKey");
-                jwtConfig.Issuer = jwtAppSettingOptions.GetValue<string>("Issuer");
-                jwtConfig.Audience = jwtAppSettingOptions.GetValue<string>("Audience");
-                jwtConfig.SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtConfig.SigningKey)),
-                    SecurityAlgorithms.HmacSha256
-                );
-            });
-
-            // Add authentication services.
-            services.AddTransient<Authenticator, Authenticator>();
-
-            // Add authorization middleware.
-            services.AddAuthorization();
-
-            // Configure Application Configuration
-            services.Configure<AppConfig>(appConfig =>
-            {
-                // Configure Mailer
-                var mailerConfiguration = Configuration.GetSection("Mail");
-                appConfig.MailerHost = mailerConfiguration.GetValue<string>("Host");
-                appConfig.MailerPort = mailerConfiguration.GetValue<int>("Port");
-                appConfig.MailerUseSSL = mailerConfiguration.GetValue<bool>("SSL");
-                appConfig.MailerUserName = mailerConfiguration.GetValue<string>("Username");
-                appConfig.MailerDisplayName = mailerConfiguration.GetValue<string>("DisplayName");
-                appConfig.MailerRelayName = mailerConfiguration.GetValue<string>("RelayName");
-                appConfig.MailterTemplatePath = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    mailerConfiguration.GetValue<string>("TemplatePath")
-                );
-
-                // Configure Uploader
-                var uploaderConfiguration = Configuration.GetSection("Uploader");
-                appConfig.Host = uploaderConfiguration.GetValue<string>("Host");
-                appConfig.RelativeUploadPath = uploaderConfiguration.GetValue<string>("UploadPath");
-                appConfig.AbsoluteUploadPath = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    appConfig.RelativeUploadPath
-                );
-            });
-
-            // Add Mailer services.
-            services.AddTransient<Mailer, Mailer>();
-
-            // Hahahaha >:D
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            // ===== Add MVC service =====
+            services.AddMvc();
         }
 
         /// <summary>
@@ -134,65 +53,24 @@ namespace App
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
-        /// <param name="loggerFactory"></param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        /// <param name="applicationDbContext"></param>
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env,
+            ApplicationDbContext applicationDbContext
+        )
         {
-            // Add logging for development
             if (env.IsDevelopment())
-            {
-                loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-                loggerFactory.AddDebug();
-            }
+                app.UseDeveloperExceptionPage();
 
-            app.UseStaticFiles();
+            app.UseAuthentication();
 
-            // JSON error response
-            app.UseMiddleware(typeof(ErrorHandlerMiddleware));
-
-            // JWT
-            var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtConfig));
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = jwtAppSettingOptions[nameof(JwtConfig.Issuer)],
-                ValidateAudience = true,
-                ValidAudience = jwtAppSettingOptions[nameof(JwtConfig.Audience)],
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.ASCII.GetBytes(
-                        jwtAppSettingOptions[nameof(JwtConfig.SigningKey)]
-                    )
-                ),
-                RequireExpirationTime = true,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
-            var jwtBearerOptions = new JwtBearerOptions
-            {
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true,
-                TokenValidationParameters = tokenValidationParameters
-            };
-
-            app.UseJwtBearerAuthentication(jwtBearerOptions);
-            // End of JWT
-
-            // TODO: Move this into somewhere but here.
-            Handlebars.RegisterHelper("asset", (writer, context, parameters) => {
-                var path = parameters[0]?.ToString() ?? "";
-                var httpContextAccessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
-                var request = httpContextAccessor.HttpContext.Request;
-                var absoluteUri = string.Concat(
-                        request.Scheme,
-                        "://",
-                        request.Host.ToUriComponent(),
-                        request.PathBase.ToUriComponent()
-                );
-
-                writer.WriteSafeString(string.Concat(absoluteUri, path));
-            });
+            app.UseMiddleware<HttpExceptionMiddleware>();
 
             app.UseMvc();
+
+            // ===== Create tables =====
+            applicationDbContext.Database.EnsureCreated();
         }
     }
 }

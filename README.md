@@ -2,65 +2,6 @@
 
 This is a dead simple boilerplate to build Restful API using .NET Core.
 
-## Features
-
-- ORM using [Dapper](https://github.com/StackExchange/Dapper) over [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/).
-    * Dapper MicroCRUD.
-- [BCrypt](https://en.wikipedia.org/wiki/Bcrypt) Password Hashing.
-- [JWT](https://en.wikipedia.org/wiki/JSON_Web_Token) Authentication.
-- JSON page error handler.
-- Fully configurable via `appsetings.json`.
-- Route versioning.
-- Lots of helpers (check the `Extensions` folder).
-- Static assets provider.
-- Mailer.
-- Need HTML template engine? Don't worry. We have HandleBars!
-- Protobuf 3 for Input and Output. (output available at root endpoint, try sending using `Accept: application/x-protobuf`)
-- More to come :)
-
-## Quick Start
-
-- Clone this repo.
-- Remove `.git` folder if needed.
-- Restore database inside `AppData` folder.
-- Configure database connection in `appsettings.json`.
-- Configure email provider in `appsettings.json`.
-- Inside `app` folder, run `dotnet restore`.
-- To run this app, there are two alternatives:
-  - Via [Debugger](https://docs.microsoft.com/en-us/dotnet/articles/csharp/getting-started/with-visual-studio-code#debug) in [Visual Studio Code](https://code.visualstudio.com/) (recommended):
-    - Open "Debug" tab [Ctrl + Shift + D]
-    - Run code
-  - Via dotnet:
-    - Inside `app` folder, run `dotnet run`.
-
-> **ATTENTION** When running inside production machine, make sure you have generated JWT Signing Key.
-
-## Routes
-
-Below is available route comes with this boilerplate:
-
-```
-GET   /                         => root [allow-anonymous]
-GET   /v1                       => v1 root [allow-anonymous]
-POST  /v1/auth/register         => register a new user [allow-anonymous] [sending email]
-POST  /v1/auth/login            => authentication
-POST  /v1/auth/forgot           => request new password via email, in case you forgot your password [allow-anonymous] [sending email]
-GET   /v1/auth/user             => check authentication, return current authenticated user
-PUT   /v1/user/profile          => change basic user profile
-PUT   /v1/user/password         => change user password
-PUT   /v1/user/avatar           => change user avatar
-```
-
-## Example Request
-
-I made a simple Postman Collection [here](https://www.getpostman.com/collections/bfc5c63ad66543463321).
-
-## TODO
-
-- [ ] Unit test, docs [here](https://docs.microsoft.com/en-us/dotnet/articles/core/testing/unit-testing-with-dotnet-test).
-- [ ] Write a blog post about this boilerplate.
-- [ ] Write protobuf example for all endpoint.
-
 ## LICENSE
 
 Copyright (c) 2017 Flipbox Studio

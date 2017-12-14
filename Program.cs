@@ -1,22 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using Microsoft.AspNetCore.Builder;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace App
 {
     public class Program
     {
+        /// <summary>
+        /// Run the application.
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseUrls("http://*:5000")
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
+            BuildWebHost(args).Run();
+        }
+
+        /// <summary>
+        /// Build web host environment.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static IWebHost BuildWebHost(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .Build();
-
-            host.Run();
-        }
     }
 }

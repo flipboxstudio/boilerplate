@@ -1,0 +1,22 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace App.Requests
+{
+    public class AuthenticationRequest
+    {
+        /// <summary>
+        /// Get or set email.
+        /// </summary>
+        /// <returns></returns>
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Get or set password.
+        /// </summary>
+        /// <returns></returns>
+        [Required]
+        public string Password { get; set; }
+    }
+}
