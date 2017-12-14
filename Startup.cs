@@ -46,6 +46,14 @@ namespace App
 
             // ===== Add MVC service =====
             services.AddMvc();
+
+            // ===== Add CORS service =====
+            services.AddCors(options => {
+                options.AddPolicy("default", policy => {
+                    // ===== Allow all =====
+                    policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
+                });
+            });
         }
 
         /// <summary>

@@ -1,8 +1,0 @@
-{
-    "protoc": {
-        "options": [
-            "--proto_path=Response\\ProtoFiles",
-            "--csharp_out=Response\\v1"
-        ]
-    }
-}

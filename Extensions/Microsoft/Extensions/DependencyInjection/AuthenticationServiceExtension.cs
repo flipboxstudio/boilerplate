@@ -8,6 +8,7 @@ using App.Services.Db.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -47,6 +48,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(jwtBearerOptions =>
             {
+                jwtBearerOptions.Configuration = new OpenIdConnectConfiguration();
                 jwtBearerOptions.Audience = appSettings.Jwt.Issuer;
                 jwtBearerOptions.Authority = appSettings.Jwt.Issuer;
                 jwtBearerOptions.RequireHttpsMetadata = false;
