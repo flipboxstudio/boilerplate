@@ -1,3 +1,7 @@
+#region using
+
+#region using
+
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -11,12 +15,18 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
+#endregion
+
+// ReSharper disable CheckNamespace
+
+#endregion
+
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class AuthenticationServiceExtension
     {
         /// <summary>
-        /// Add authentication service.
+        ///     Add authentication service.
         /// </summary>
         /// <param name="serviceCollection"></param>
         /// <returns></returns>
@@ -25,7 +35,8 @@ namespace Microsoft.Extensions.DependencyInjection
             var appSettings = serviceCollection.BuildServiceProvider().GetService<IOptions<AppSettings>>().Value;
 
             // ===== Add Identity =====
-            serviceCollection.AddIdentity<ApplicationUser, IdentityRole>(options => {
+            serviceCollection.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
                 // User settings
                 options.User.RequireUniqueEmail = true;
 

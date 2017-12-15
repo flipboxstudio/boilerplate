@@ -1,3 +1,7 @@
+#region using
+
+#region using
+
 using System;
 using App;
 using App.Services.Db;
@@ -5,12 +9,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
+#endregion
+
+// ReSharper disable CheckNamespace
+
+#endregion
+
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class DatabaseServiceExtensions
     {
         /// <summary>
-        /// Add database service.
+        ///     Add database service.
         /// </summary>
         /// <param name="serviceCollection"></param>
         /// <returns></returns>

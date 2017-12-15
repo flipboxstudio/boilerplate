@@ -1,6 +1,10 @@
+#region using
+
 using System.Threading.Tasks;
 using App.Exceptions;
 using Microsoft.AspNetCore.Http;
+
+#endregion
 
 namespace App.Middlewares
 {
@@ -9,13 +13,16 @@ namespace App.Middlewares
         private readonly RequestDelegate _requestDelegate;
 
         /// <summary>
-        /// Class constructor.
+        ///     Class constructor.
         /// </summary>
         /// <param name="requestDelegate"></param>
-        public HttpExceptionMiddleware(RequestDelegate requestDelegate) => _requestDelegate = requestDelegate;
+        public HttpExceptionMiddleware(RequestDelegate requestDelegate)
+        {
+            _requestDelegate = requestDelegate;
+        }
 
         /// <summary>
-        /// Invoke the middleware.
+        ///     Invoke the middleware.
         /// </summary>
         /// <param name="httpContext"></param>
         /// <returns></returns>

@@ -1,5 +1,8 @@
-using System;
+#region using
+
 using Xunit;
+
+#endregion
 
 namespace App.Tests
 {

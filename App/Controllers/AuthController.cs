@@ -1,3 +1,5 @@
+#region using
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,31 +14,33 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
+#endregion
+
 namespace App.Controllers
 {
     [Route("[controller]/[action]")]
     public class AuthController : Controller
     {
+        private readonly Dictionary<int, string> _authMessage = new Dictionary<int, string>
+        {
+            {801, "Authentication success."},
+            {802, "Your account has been locked out."},
+            {803, "You are not allowed to log in to this service."},
+            {804, "Two Factor Authentication is required to log in to this service."},
+            {805, "Wrong email and / or password."},
+            {806, "Registration success."},
+            {807, "Registration failure."},
+            {808, "Authorized."}
+        };
+
         private readonly SignInManager<ApplicationUser> _signInManager;
 
         private readonly TokenGenerator _tokenGenerator;
 
         private readonly UserManager<ApplicationUser> _userManager;
 
-        private readonly Dictionary<int, string> _authMessage = new Dictionary<int, string>
-        {
-            { 801, "Authentication success." },
-            { 802, "Your account has been locked out." },
-            { 803, "You are not allowed to log in to this service." },
-            { 804, "Two Factor Authentication is required to log in to this service." },
-            { 805, "Wrong email and / or password." },
-            { 806, "Registration success." },
-            { 807, "Registration failure." },
-            { 808, "Authorized." },
-        };
-
         /// <summary>
-        /// Class constructor.
+        ///     Class constructor.
         /// </summary>
         /// <param name="signInManager"></param>
         /// <param name="tokenGenerator"></param>
@@ -53,7 +57,7 @@ namespace App.Controllers
         }
 
         /// <summary>
-        /// Authenticate a user.
+        ///     Authenticate a user.
         /// </summary>
         /// <param name="authenticationRequest"></param>
         /// <returns></returns>
@@ -63,10 +67,10 @@ namespace App.Controllers
         {
             var status = 801;
             var result = await _signInManager.PasswordSignInAsync(
-                userName: authenticationRequest.Email,
-                password: authenticationRequest.Password,
-                isPersistent: false,
-                lockoutOnFailure: true
+                authenticationRequest.Email,
+                authenticationRequest.Password,
+                false,
+                true
             );
 
             if (result.Succeeded)
@@ -85,21 +89,13 @@ namespace App.Controllers
             }
 
             if (result.IsLockedOut)
-            {
                 status = 802;
-            }
             else if (result.IsNotAllowed)
-            {
                 status = 803;
-            }
             else if (result.RequiresTwoFactor)
-            {
                 status = 804;
-            }
             else
-            {
                 status = 805;
-            }
 
             throw new HttpException(HttpStatusCode.BadRequest)
             {
@@ -112,7 +108,7 @@ namespace App.Controllers
         }
 
         /// <summary>
-        /// Register new user.
+        ///     Register new user.
         /// </summary>
         /// <param name="registrationRequest"></param>
         /// <returns></returns>
@@ -121,8 +117,8 @@ namespace App.Controllers
         public async Task<object> Register([FromBody] RegistrationRequest registrationRequest)
         {
             var status = 806;
-            var user = new ApplicationUser { UserName = registrationRequest.Email, Email = registrationRequest.Email };
-            var result = await _userManager.CreateAsync(user: user, password: registrationRequest.Password);
+            var user = new ApplicationUser {UserName = registrationRequest.Email, Email = registrationRequest.Email};
+            var result = await _userManager.CreateAsync(user, registrationRequest.Password);
 
             if (!result.Succeeded)
             {
@@ -134,17 +130,19 @@ namespace App.Controllers
                     {
                         Message = _authMessage[status],
                         Status = status,
-                        Errors = result.Errors
-                    }),
+                        result.Errors
+                    })
                 };
             }
 
-            await _signInManager.SignInAsync(user: user, isPersistent: false);
+            await _signInManager.SignInAsync(user, false);
 
-            return new {
+            return new
+            {
                 Message = _authMessage[status],
                 Status = status,
-                Data = new {
+                Data = new
+                {
                     Token = _tokenGenerator.GenerateToken(user),
                     User = user
                 }
@@ -152,19 +150,22 @@ namespace App.Controllers
         }
 
         /// <summary>
-        /// Get current user.
+        ///     Get current user.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Authorize]
-        public async Task<object> Authorize() => new
+        public async Task<object> Authorize()
         {
-            Message = _authMessage[808],
-            Status = 808,
-            Data = new
+            return new
             {
-                User = await _userManager.GetUserAsync(User)
-            },
-        };
+                Message = _authMessage[808],
+                Status = 808,
+                Data = new
+                {
+                    User = await _userManager.GetUserAsync(User)
+                }
+            };
+        }
     }
 }

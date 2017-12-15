@@ -1,38 +1,48 @@
+#region using
+
 using System;
 using System.Net;
+
+#endregion
 
 namespace App.Exceptions
 {
     public class HttpException : Exception
     {
-        private readonly int httpStatusCode;
-
+        /// <inheritdoc />
         /// <summary>
-        /// Class constructor.
+        ///     Class constructor.
         /// </summary>
         /// <param name="httpStatusCode"></param>
-        public HttpException(int httpStatusCode) => this.httpStatusCode = httpStatusCode;
+        public HttpException(int httpStatusCode)
+        {
+            HttpStatusCode = httpStatusCode;
+        }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Class constructor.
+        ///     Class constructor.
         /// </summary>
         /// <param name="httpStatusCode"></param>
-        public HttpException(HttpStatusCode httpStatusCode) => this.httpStatusCode = (int)httpStatusCode;
+        public HttpException(HttpStatusCode httpStatusCode)
+        {
+            HttpStatusCode = (int) httpStatusCode;
+        }
 
         /// <summary>
-        /// HTTP status code.
+        ///     HTTP status code.
         /// </summary>
         /// <returns></returns>
-        public int HttpStatusCode { get { return this.httpStatusCode; } }
+        public int HttpStatusCode { get; }
 
         /// <summary>
-        /// Response content.
+        ///     Response content.
         /// </summary>
         /// <returns></returns>
         public string Content { get; set; } = string.Empty;
 
         /// <summary>
-        /// Response content type.
+        ///     Response content type.
         /// </summary>
         /// <returns></returns>
         public string ContentType { get; set; } = "application/json";

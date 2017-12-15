@@ -1,19 +1,26 @@
+#region using
+
 using Microsoft.AspNetCore.Mvc;
+
+#endregion
 
 namespace App.Controllers
 {
     public class AppController : Controller
     {
         /// <summary>
-        /// Default route.
+        ///     Default route.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Route("")]
-        public object Index() => new
+        public object Index()
         {
-            Message = "OK.",
-            Status = 1,
-        };
+            return new
+            {
+                Message = "OK.",
+                Status = 1
+            };
+        }
     }
 }

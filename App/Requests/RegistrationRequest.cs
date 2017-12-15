@@ -1,11 +1,15 @@
+#region using
+
 using System.ComponentModel.DataAnnotations;
+
+#endregion
 
 namespace App.Requests
 {
     public class RegistrationRequest
     {
         /// <summary>
-        /// Get or set email.
+        ///     Get or set email.
         /// </summary>
         /// <returns></returns>
         [Required]
@@ -13,7 +17,7 @@ namespace App.Requests
         public string Email { get; set; }
 
         /// <summary>
-        /// Get or set password.
+        ///     Get or set password.
         /// </summary>
         /// <returns></returns>
         [Required]
