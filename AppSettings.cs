@@ -21,6 +21,10 @@ namespace App
 
         public string Issuer { get; set; }
 
+        public string Audience { get; set; }
+
+        public string Authority { get; set; }
+
         public double ExpiryDays { get; set; } = 30;
     }
 }

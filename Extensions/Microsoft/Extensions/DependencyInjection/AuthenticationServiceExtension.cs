@@ -19,17 +19,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Add authentication service.
         /// </summary>
         /// <param name="serviceCollection"></param>
-        /// <param name="configuration"></param>
         /// <returns></returns>
-        public static IServiceCollection AddAuthentication(
-            this IServiceCollection serviceCollection,
-            IServiceProvider serviceProvider
-        )
+        public static IServiceCollection AddAuthenticationService(this IServiceCollection serviceCollection)
         {
-            var appSettings = serviceProvider.GetService<IOptions<AppSettings>>().Value;
+            var appSettings = serviceCollection.BuildServiceProvider().GetService<IOptions<AppSettings>>().Value;
 
             // ===== Add Identity =====
-            serviceCollection.AddIdentity<ApplicationUser, ApplicationRole>(options => {
+            serviceCollection.AddIdentity<ApplicationUser, IdentityRole>(options => {
                 // User settings
                 options.User.RequireUniqueEmail = true;
 
@@ -60,9 +56,12 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(jwtBearerOptions =>
             {
+                // ===== Add another service for dependency injection feature =====
+                serviceCollection.AddTransient<SecurityTokenValidator>();
+
                 jwtBearerOptions.Configuration = new OpenIdConnectConfiguration();
-                jwtBearerOptions.Audience = appSettings.Jwt.Issuer;
-                jwtBearerOptions.Authority = appSettings.Jwt.Issuer;
+                jwtBearerOptions.Audience = appSettings.Jwt.Audience;
+                jwtBearerOptions.Authority = appSettings.Jwt.Authority;
                 jwtBearerOptions.RequireHttpsMetadata = false;
                 jwtBearerOptions.SaveToken = true;
                 jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
@@ -72,13 +71,17 @@ namespace Microsoft.Extensions.DependencyInjection
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = appSettings.Jwt.Issuer,
-                    ValidAudience = appSettings.Jwt.Issuer,
+                    ValidAudience = appSettings.Jwt.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.Jwt.Key))
                 };
+                jwtBearerOptions.SecurityTokenValidators.Clear();
+                jwtBearerOptions.SecurityTokenValidators.Add(
+                    serviceCollection.BuildServiceProvider().GetService<SecurityTokenValidator>()
+                );
             });
 
             // ===== Add another service for dependency injection feature =====
-            serviceCollection.AddSingleton<TokenGenerator, TokenGenerator>();
+            serviceCollection.AddTransient<TokenGenerator>();
 
             return serviceCollection;
         }

@@ -1,5 +1,4 @@
 ﻿using App.Middlewares;
-using App.Services.Db;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -29,24 +28,21 @@ namespace App
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
-        /// <param name="services"></param>
-        public void ConfigureServices(IServiceCollection services)
+        /// <param name="serviceCollection"></param>
+        public void ConfigureServices(IServiceCollection serviceCollection)
         {
             // ===== Strongly typed application settings =====
-            services.AddSingleton<IConfiguration>(_configuration);
-            services.Configure<AppSettings>(_configuration.GetSection("AppSettings"));
-
-            // ===== Build the intermediate service provider =====
-            var serviceProvider = services.BuildServiceProvider();
+            serviceCollection.AddSingleton<IConfiguration>(_configuration);
+            serviceCollection.Configure<AppSettings>(_configuration.GetSection("AppSettings"));
 
             // ===== Add database service =====
-            services.AddDatabase(serviceProvider);
+            serviceCollection.AddDatabaseService();
 
             // ===== Add authentication service =====
-            services.AddAuthentication(serviceProvider);
+            serviceCollection.AddAuthenticationService();
 
             // ===== Add MVC service =====
-            services.AddMvc()
+            serviceCollection.AddMvc()
                 .AddJsonOptions(options => {
                     // ===== Use camel case =====
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -57,7 +53,7 @@ namespace App
                 });
 
             // ===== Add CORS service =====
-            services.AddCors(options => {
+            serviceCollection.AddCors(options => {
                 options.AddPolicy("default", policy => {
                     // ===== Allow all =====
                     policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
@@ -68,26 +64,18 @@ namespace App
         /// <summary>
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
-        /// <param name="app"></param>
-        /// <param name="env"></param>
-        /// <param name="applicationDbContext"></param>
-        public void Configure(
-            IApplicationBuilder app,
-            IHostingEnvironment env,
-            ApplicationDbContext applicationDbContext
-        )
+        /// <param name="applicationBuilder"></param>
+        /// <param name="hostingEnvironment"></param>
+        public void Configure(IApplicationBuilder applicationBuilder, IHostingEnvironment hostingEnvironment)
         {
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
+            if (hostingEnvironment.IsDevelopment())
+                applicationBuilder.UseDeveloperExceptionPage();
 
-            app.UseAuthentication();
+            applicationBuilder.UseAuthentication();
 
-            app.UseMiddleware<HttpExceptionMiddleware>();
+            applicationBuilder.UseMiddleware<HttpExceptionMiddleware>();
 
-            app.UseMvc();
-
-            // ===== Create tables =====
-            applicationDbContext.Database.EnsureCreated();
+            applicationBuilder.UseMvc();
         }
     }
 }

@@ -13,17 +13,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Add database service.
         /// </summary>
         /// <param name="serviceCollection"></param>
-        /// <param name="serviceProvider"></param>
         /// <returns></returns>
-        public static IServiceCollection AddDatabase(
-            this IServiceCollection serviceCollection,
-            IServiceProvider serviceProvider
-        )
+        public static IServiceCollection AddDatabaseService(this IServiceCollection serviceCollection)
         {
             return serviceCollection.AddDbContext<ApplicationDbContext>(optionsBuilder =>
             {
-                var appSettings = serviceProvider.GetService<IOptions<AppSettings>>().Value;
-                var configuration = serviceProvider.GetService<IConfiguration>();
+                var appSettings = serviceCollection.BuildServiceProvider().GetService<IOptions<AppSettings>>().Value;
+                var configuration = serviceCollection.BuildServiceProvider().GetService<IConfiguration>();
 
                 var databaseDriver = appSettings.Database.Driver;
                 var connectionString = configuration.GetConnectionString($"{databaseDriver}Connection");
