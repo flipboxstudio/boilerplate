@@ -23,16 +23,16 @@ namespace App.Controllers
 
         private readonly UserManager<ApplicationUser> _userManager;
 
-        private static readonly Dictionary<int, string> _messages = new Dictionary<int, string>
+        private readonly Dictionary<int, string> _authMessage = new Dictionary<int, string>
         {
-            { 101, "Authentication success." },
-            { 102, "Your account has been locked out." },
-            { 103, "You are not allowed to log in to this service." },
-            { 104, "Two Factor Authentication is required to log in to this service." },
-            { 105, "Wrong email and / or password." },
-            { 106, "Registration success." },
-            { 107, "Registration failure." },
-            { 108, "Authorized." },
+            { 801, "Authentication success." },
+            { 802, "Your account has been locked out." },
+            { 803, "You are not allowed to log in to this service." },
+            { 804, "Two Factor Authentication is required to log in to this service." },
+            { 805, "Wrong email and / or password." },
+            { 806, "Registration success." },
+            { 807, "Registration failure." },
+            { 808, "Authorized." },
         };
 
         /// <summary>
@@ -55,27 +55,27 @@ namespace App.Controllers
         /// <summary>
         /// Authenticate a user.
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="authenticationRequest"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateRequest]
-        public async Task<object> Login([FromBody] AuthenticationRequest request)
+        public async Task<object> Login([FromBody] AuthenticationRequest authenticationRequest)
         {
-            var status = 101;
+            var status = 801;
             var result = await _signInManager.PasswordSignInAsync(
-                userName: request.Email,
-                password: request.Password,
+                userName: authenticationRequest.Email,
+                password: authenticationRequest.Password,
                 isPersistent: false,
                 lockoutOnFailure: true
             );
 
             if (result.Succeeded)
             {
-                var user = _userManager.Users.SingleOrDefault(record => record.Email == request.Email);
+                var user = _userManager.Users.SingleOrDefault(record => record.Email == authenticationRequest.Email);
 
                 return new
                 {
-                    Message = _messages[status],
+                    Message = _authMessage[status],
                     Status = status,
                     Data = new
                     {
@@ -86,26 +86,26 @@ namespace App.Controllers
 
             if (result.IsLockedOut)
             {
-                status = 102;
+                status = 802;
             }
             else if (result.IsNotAllowed)
             {
-                status = 103;
+                status = 803;
             }
             else if (result.RequiresTwoFactor)
             {
-                status = 104;
+                status = 804;
             }
             else
             {
-                status = 105;
+                status = 805;
             }
 
             throw new HttpException(HttpStatusCode.BadRequest)
             {
                 Content = JsonConvert.SerializeObject(new
                 {
-                    Message = _messages[status],
+                    Message = _authMessage[status],
                     Status = status
                 })
             };
@@ -114,25 +114,25 @@ namespace App.Controllers
         /// <summary>
         /// Register new user.
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="registrationRequest"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateRequest]
-        public async Task<object> Register([FromBody] RegistrationRequest request)
+        public async Task<object> Register([FromBody] RegistrationRequest registrationRequest)
         {
-            var status = 106;
-            var user = new ApplicationUser { UserName = request.Email, Email = request.Email };
-            var result = await _userManager.CreateAsync(user: user, password: request.Password);
+            var status = 806;
+            var user = new ApplicationUser { UserName = registrationRequest.Email, Email = registrationRequest.Email };
+            var result = await _userManager.CreateAsync(user: user, password: registrationRequest.Password);
 
             if (!result.Succeeded)
             {
-                status = 107;
+                status = 807;
 
                 throw new HttpException(HttpStatusCode.BadRequest)
                 {
                     Content = JsonConvert.SerializeObject(new
                     {
-                        Message = _messages[status],
+                        Message = _authMessage[status],
                         Status = status,
                         Errors = result.Errors
                     }),
@@ -142,10 +142,11 @@ namespace App.Controllers
             await _signInManager.SignInAsync(user: user, isPersistent: false);
 
             return new {
-                Message = _messages[status],
+                Message = _authMessage[status],
                 Status = status,
                 Data = new {
-                    Token = _tokenGenerator.GenerateToken(user)
+                    Token = _tokenGenerator.GenerateToken(user),
+                    User = user
                 }
             };
         }
@@ -156,13 +157,13 @@ namespace App.Controllers
         /// <returns></returns>
         [HttpGet]
         [Authorize]
-        public async Task<object> Account() => new
+        public async Task<object> Authorize() => new
         {
-            Message = _messages[108],
-            Status = 108,
+            Message = _authMessage[808],
+            Status = 808,
             Data = new
             {
-                Account = await _userManager.GetUserAsync(User)
+                User = await _userManager.GetUserAsync(User)
             },
         };
     }

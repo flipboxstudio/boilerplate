@@ -17,8 +17,8 @@ namespace App.Services.Auth
         /// <summary>
         /// Class constructor.
         /// </summary>
-        /// <param name="settings"></param>
-        public TokenGenerator(IOptions<AppSettings> settings) => _appSettings = settings.Value;
+        /// <param name="options"></param>
+        public TokenGenerator(IOptions<AppSettings> options) => _appSettings = options.Value;
 
         /// <summary>
         /// Generate JWT.

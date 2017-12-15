@@ -1,6 +1,27 @@
 # Boilerplate
 
-This is a dead simple boilerplate to build Restful API using .NET Core.
+This is a dead simple boilerplate to build Restful API using [.NET Core](https://www.microsoft.com/net/).
+
+## Quick Start
+
+### Running
+
+```sh
+git clone https://github.com/flipboxstudio/boilerplate.git
+cd boilerplate/App
+dotnet restore
+dotnet ef database update
+dotnet run
+```
+
+### Testing
+
+```sh
+git clone https://github.com/flipboxstudio/boilerplate.git
+cd boilerplate/App.Tests
+dotnet restore
+dotnet test
+```
 
 ## LICENSE
 

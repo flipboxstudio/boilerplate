@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Controllers
@@ -11,7 +10,6 @@ namespace App.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("")]
-        [AllowAnonymous]
         public object Index() => new
         {
             Message = "OK.",

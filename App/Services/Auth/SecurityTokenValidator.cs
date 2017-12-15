@@ -38,15 +38,12 @@ namespace App.Services.Auth
         public SecurityTokenValidator(UserManager<ApplicationUser> userManager) => _userManager = userManager;
 
         /// <inheritdoc />
-        public override ClaimsPrincipal ValidateToken(string securityToken, TokenValidationParameters validationParameters, out SecurityToken validatedToken)
+        public override ClaimsPrincipal ValidateToken(string plainToken, TokenValidationParameters tokenValidationParameter, out SecurityToken securityToken)
         {
-            var claimsPrincipal = base.ValidateToken(securityToken, validationParameters, out validatedToken);
-            var user = Task.Run(async () => await _userManager.GetUserAsync(claimsPrincipal)).Result;
+            var claimsPrincipal = base.ValidateToken(plainToken, tokenValidationParameter, out securityToken);
 
-            if (user == null)
-            {
+            if (Task.Run(async () => await _userManager.GetUserAsync(claimsPrincipal)).Result == null)
                 throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidUserException("IDX10800: Unable to obtain user."));
-            }
 
             return claimsPrincipal;
         }

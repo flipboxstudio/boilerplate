@@ -8,19 +8,16 @@ namespace App
         /// <summary>
         /// Run the application.
         /// </summary>
-        /// <param name="args"></param>
-        public static void Main(string[] args)
-        {
-            BuildWebHost(args).Run();
-        }
+        /// <param name="arguments"></param>
+        public static void Main(string[] arguments) => BuildWebHost(arguments).Run();
 
         /// <summary>
         /// Build web host environment.
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="arguments"></param>
         /// <returns></returns>
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IWebHost BuildWebHost(string[] arguments) =>
+            WebHost.CreateDefaultBuilder(arguments)
                 .UseStartup<Startup>()
                 .Build();
     }

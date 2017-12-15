@@ -20,10 +20,7 @@ namespace App
         /// Class constructor.
         /// </summary>
         /// <param name="configuration"></param>
-        public Startup(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => _configuration = configuration;
 
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
@@ -43,20 +40,26 @@ namespace App
 
             // ===== Add MVC service =====
             serviceCollection.AddMvc()
-                .AddJsonOptions(options => {
-                    // ===== Use camel case =====
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+                .AddJsonOptions(mvcJsonOptions => {
+                    // ===== Use snake case =====
+                    mvcJsonOptions.SerializerSettings.ContractResolver = new DefaultContractResolver
                     {
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        NamingStrategy = new SnakeCaseNamingStrategy()
                     };
+                    mvcJsonOptions.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
+                    mvcJsonOptions.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+
+                    JsonConvert.DefaultSettings = () => mvcJsonOptions.SerializerSettings;
                 });
 
             // ===== Add CORS service =====
-            serviceCollection.AddCors(options => {
-                options.AddPolicy("default", policy => {
+            serviceCollection.AddCors(corsOptions => {
+                corsOptions.AddPolicy("default", corsPolicyBuilder => {
                     // ===== Allow all =====
-                    policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
+                    corsPolicyBuilder
+                        .AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                 });
             });
         }
