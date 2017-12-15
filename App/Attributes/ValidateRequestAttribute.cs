@@ -23,8 +23,10 @@ namespace App.Attributes
             {
                 Message = "Failed.",
                 Errors = actionExecutingContext.ModelState.ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => kvp.Value.Errors.Select(error => error.ErrorMessage).ToArray()
+                    keyValuePair => keyValuePair.Key,
+                    keyValuePair => keyValuePair.Value.Errors.Select(
+                        modelError => modelError.ErrorMessage
+                    ).ToArray()
                 )
             });
         }
