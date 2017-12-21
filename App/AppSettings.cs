@@ -22,6 +22,6 @@ namespace App
 
         public string Authority { get; set; }
 
-        public double ExpiryDays { get; set; } = 30;
+        public double Expiry { get; set; } = 60;
     }
 }

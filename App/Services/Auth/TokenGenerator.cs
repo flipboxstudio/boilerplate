@@ -36,7 +36,7 @@ namespace App.Services.Auth
             var claims = GenerateClaims(applicationUser);
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Jwt.Key));
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(_appSettings.Jwt.ExpiryDays);
+            var expires = DateTime.Now.AddMinutes(_appSettings.Jwt.Expiry);
             var token = new JwtSecurityToken(
                 _appSettings.Jwt.Issuer,
                 _appSettings.Jwt.Audience,
