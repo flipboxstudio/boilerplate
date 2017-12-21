@@ -31,7 +31,7 @@ namespace App.Services.Auth
         ///     Class Constructor.
         /// </summary>
         /// <param name="userManager"></param>
-        public SecurityTokenValidator(UserManager<ApplicationUser> userManager)
+        public SecurityTokenValidator(UserManager<ApplicationUser> userManager) : base()
         {
             _userManager = userManager;
         }
