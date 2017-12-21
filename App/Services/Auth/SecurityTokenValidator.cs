@@ -12,16 +12,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace App.Services.Auth
 {
-    public class SecurityTokenInvalidUserException : SecurityTokenInvalidAudienceException
+    public class SecurityTokenInvalidUserException : SecurityTokenException
     {
         public SecurityTokenInvalidUserException(string message) : base(message)
-        {
-        }
-    }
-
-    public class SecurityTokenInvalidClaimsException : SecurityTokenInvalidAudienceException
-    {
-        public SecurityTokenInvalidClaimsException(string message) : base(message)
         {
         }
     }
