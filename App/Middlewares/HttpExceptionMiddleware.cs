@@ -34,10 +34,13 @@ namespace App.Middlewares
             }
             catch (HttpException httpException)
             {
-                httpContext.Response.StatusCode = httpException.HttpStatusCode;
+                httpContext.Response.StatusCode = (int) httpException.HttpStatusCode;
                 httpContext.Response.ContentType = httpException.ContentType;
 
-                await httpContext.Response.WriteAsync(httpException.Content ?? httpException.Message);
+                await httpContext.Response.WriteAsync(
+                    string.IsNullOrEmpty(httpException.Content)
+                        ? httpException.Message
+                        : httpException.Content);
             }
         }
     }

@@ -14,26 +14,16 @@ namespace App.Exceptions
         ///     Class constructor.
         /// </summary>
         /// <param name="httpStatusCode"></param>
-        public HttpException(int httpStatusCode)
-        {
-            HttpStatusCode = httpStatusCode;
-        }
-
-        /// <inheritdoc />
-        /// <summary>
-        ///     Class constructor.
-        /// </summary>
-        /// <param name="httpStatusCode"></param>
         public HttpException(HttpStatusCode httpStatusCode)
         {
-            HttpStatusCode = (int) httpStatusCode;
+            HttpStatusCode = httpStatusCode;
         }
 
         /// <summary>
         ///     HTTP status code.
         /// </summary>
         /// <returns></returns>
-        public int HttpStatusCode { get; }
+        public HttpStatusCode HttpStatusCode { get; }
 
         /// <summary>
         ///     Response content.

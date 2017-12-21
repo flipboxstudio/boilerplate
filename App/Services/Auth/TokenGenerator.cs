@@ -48,6 +48,11 @@ namespace App.Services.Auth
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        /// <summary>
+        ///     Generate claims.
+        /// </summary>
+        /// <param name="applicationUser"></param>
+        /// <returns></returns>
         private static IEnumerable<Claim> GenerateClaims(ApplicationUser applicationUser)
         {
             return new List<Claim>
