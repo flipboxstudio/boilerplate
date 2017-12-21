@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using App.Attributes;
 using App.Exceptions;
 using App.Requests;
 using App.Services.Auth;
@@ -13,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using WebApiContrib.Core.Filters;
 
 #endregion
 
@@ -62,7 +62,7 @@ namespace App.Controllers
         /// <param name="authenticationRequest"></param>
         /// <returns></returns>
         [HttpPost]
-        [ValidateRequest]
+        [Validation]
         public async Task<object> Login([FromBody] AuthenticationRequest authenticationRequest)
         {
             var status = 801;
@@ -113,7 +113,7 @@ namespace App.Controllers
         /// <param name="registrationRequest"></param>
         /// <returns></returns>
         [HttpPost]
-        [ValidateRequest]
+        [Validation]
         public async Task<object> Register([FromBody] RegistrationRequest registrationRequest)
         {
             var status = 806;
