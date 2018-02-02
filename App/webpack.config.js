@@ -6,7 +6,6 @@ const sharedConfig = function () {
     return {
         output: {
             path: path.resolve(__dirname, './wwwroot/dist'),
-            publicPath: '/dist/',
             filename: '[name].js'
         },
         resolve: {
@@ -38,20 +37,26 @@ const sharedConfig = function () {
 }
 
 module.exports = [
-    merge(sharedConfig(), {
-        target: 'node',
-        entry: {
-            server: './ClientApp/server.ts',
-        },
-        output: {
-            libraryTarget: 'commonjs2',
-        }
-    }),
+    // Client
     merge(sharedConfig(), {
         entry: {
             client: './ClientApp/client.ts'
         },
-    })
+        output: {
+            publicPath: '/dist/',
+        }
+    }),
+    // Renderer
+    merge(sharedConfig(), {
+        target: 'node',
+        entry: {
+            renderer: './ClientApp/renderer.ts',
+        },
+        output: {
+            path: path.resolve(__dirname, './ClientApp/dist'),
+            libraryTarget: 'commonjs',
+        }
+    }),
 ];
 
 if (process.env.NODE_ENV === 'production') {

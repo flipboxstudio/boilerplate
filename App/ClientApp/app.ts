@@ -1,19 +1,14 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router';
-import { createRouter } from './router';
+import { Store } from 'vuex';
+import { Kernel } from './interfaces';
 import { createStore } from './store';
 import App from './components/App.vue';
-import { Store } from 'vuex';
-
-interface Kernel {
-    app: Vue,
-    router: VueRouter,
-    store: Store<never[]>
-}
+import { createRouter } from './router';
+import { VueRouter } from 'vue-router/types/router';
 
 export function createApp(): Kernel {
-    const router = createRouter();
-    const store = createStore();
+    const router: VueRouter = createRouter();
+    const store: Store<never[]> = createStore();
 
     const app = new Vue({
         router: router,

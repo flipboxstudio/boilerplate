@@ -1,13 +1,13 @@
-import Vue from 'vue'
-import { createApp } from './app'
+import { createApp } from './app';
+import { Vue } from 'vue/types/vue';
+import { SpaResponse, Kernel } from './interfaces';
+import { VueRouter } from 'vue-router/types/router';
 
-interface SpaResponse {
-    urlPath: string
-}
-
-export default function (spaResponse: SpaResponse) {
+export default (spaResponse: SpaResponse): Promise<Vue> => {
     return new Promise<Vue>((resolve: any, reject: any) => {
-        const { app, router } = createApp();
+        const kernel: Kernel = createApp();
+        const app: Vue = kernel.app;
+        const router: VueRouter = kernel.router;
 
         router.push(spaResponse.urlPath);
 
