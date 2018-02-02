@@ -16,9 +16,9 @@ using WebApiContrib.Core.Filters;
 
 #endregion
 
-namespace App.Controllers
+namespace App.Controllers.Api.v1
 {
-    [Route("[controller]/[action]")]
+    [Route("api/v1/[controller]/[action]")]
     public class AuthController : Controller
     {
         private readonly Dictionary<int, string> _authMessage = new Dictionary<int, string>

@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "types": [
+            "node"
+        ],
+        "module": "es2015",
+        "target": "es2015",
+        "lib": ["es6"],
+        "sourceMap": true,
+        "strict": true,
+        "moduleResolution": "node",
+        "experimentalDecorators": true
+    },
+    "include": [
+        "./ClientApp/**/*"
+    ]
+}

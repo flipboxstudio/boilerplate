@@ -79,7 +79,7 @@ If you configure your database using `Sqlite` driver, the used connection string
 #### Example Request
 
 ```
-POST /auth/register HTTP/1.1
+POST /api/v1/auth/register HTTP/1.1
 Host: localhost:1822
 Content-Type: application/json
 
@@ -120,7 +120,7 @@ Content-Type: application/json
 #### Example Request
 
 ```
-POST /auth/login HTTP/1.1
+POST /api/v1/auth/login HTTP/1.1
 Host: localhost:1822
 Content-Type: application/json
 
@@ -147,7 +147,7 @@ Content-Type: application/json
 #### Example Request
 
 ```
-GET /auth/authorize HTTP/1.1
+GET /api/v1/auth/authorize HTTP/1.1
 Host: localhost:1822
 Authorization: Bearer JWT_TOKEN
 

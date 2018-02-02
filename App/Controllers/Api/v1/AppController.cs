@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 #endregion
 
-namespace App.Controllers
+namespace App.Controllers.Api.v1
 {
+    [Route("api/v1")]
     public class AppController : Controller
     {
         /// <summary>
@@ -13,8 +14,7 @@ namespace App.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("")]
-        public object Index()
+        public object Get()
         {
             return new
             {

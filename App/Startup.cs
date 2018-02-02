@@ -3,6 +3,7 @@
 using App.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -79,14 +80,33 @@ namespace App
         /// <param name="hostingEnvironment"></param>
         public void Configure(IApplicationBuilder applicationBuilder, IHostingEnvironment hostingEnvironment)
         {
-            if (hostingEnvironment.IsDevelopment())
+            if (hostingEnvironment.IsDevelopment()) {
                 applicationBuilder.UseDeveloperExceptionPage();
+
+                applicationBuilder.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+                {
+                    HotModuleReplacement = true
+                });
+            }
+
+            applicationBuilder.UseStaticFiles();
 
             applicationBuilder.UseAuthentication();
 
             applicationBuilder.UseMiddleware<HttpExceptionMiddleware>();
 
-            applicationBuilder.UseMvc();
+            applicationBuilder.UseMvc(routes => {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller}/{action}/{id?}",
+                    defaults: new { controller = "Home", action = "Index" }
+                );
+
+                routes.MapSpaFallbackRoute(
+                    name: "spa-fallback",
+                    defaults: new { controller = "Home", action = "Index" }
+                );
+            });
         }
     }
 }
