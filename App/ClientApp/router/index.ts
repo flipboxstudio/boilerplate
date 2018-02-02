@@ -6,7 +6,7 @@ import About from '@/components/pages/About.vue';
 
 Vue.use(VueRouter);
 
-export function createRouter() {
+export function createRouter(): VueRouter {
     return new VueRouter({
         mode: 'history',
         routes: [

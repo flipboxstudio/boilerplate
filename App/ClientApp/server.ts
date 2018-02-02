@@ -1,14 +1,15 @@
+import Vue from 'vue'
 import { createApp } from './app'
 
-export default function (context: any) {
-    return new Promise((resolve: any, reject: any) => {
+interface SpaResponse {
+    urlPath: string
+}
+
+export default function (spaResponse: SpaResponse) {
+    return new Promise<Vue>((resolve: any, reject: any) => {
         const { app, router } = createApp();
 
-        if (!context.url) {
-            return resolve(app);
-        }
-
-        router.push(context.url);
+        router.push(spaResponse.urlPath);
 
         router.onReady(() => {
             const matchedComponents = router.getMatchedComponents();

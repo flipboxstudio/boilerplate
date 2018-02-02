@@ -1,9 +1,6 @@
+@model App.Responses.SpaResponse;
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<div id="app" asp-prerender-module="ClientApp/renderer" asp-prerender-data="new { Url = @Context.Request.Path }"></div>
-
-@section scripts {
-    <script src="~/dist/client.js" asp-append-version="true"></script>
-}
+<div id="app" asp-prerender-module="ClientApp/renderer" asp-prerender-data="@Model"></div>

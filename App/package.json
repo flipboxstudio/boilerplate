@@ -2,7 +2,8 @@
     "private": true,
     "dependencies": {
         "vue": "^2.5.0",
-        "vue-router": "^3.0.1"
+        "vue-router": "^3.0.1",
+        "vuex": "^3.0.1"
     },
     "devDependencies": {
         "@types/node": "^9.4.0",
