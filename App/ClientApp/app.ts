@@ -10,7 +10,7 @@ export function createApp(): Kernel {
     const router: VueRouter = createRouter();
     const store: Store<never[]> = createStore();
 
-    const app = new Vue({
+    const app: Vue = new Vue({
         router: router,
         store: store,
         render: h => h(App)

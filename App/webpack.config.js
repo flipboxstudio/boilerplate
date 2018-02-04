@@ -12,6 +12,8 @@ const sharedConfig = function () {
         resolve: {
             alias: {
                 vue$: 'vue/dist/vue.esm.js',
+                vuex$: 'vuex/dist/vuex.esm.js',
+                'vue-router$': 'vue-router/dist/vue-router.esm.js',
                 '@': path.resolve(__dirname, './ClientApp')
             },
             extensions: ['.ts', '.js', '.vue', '.json']
@@ -19,7 +21,7 @@ const sharedConfig = function () {
         module: {
             rules: [{
                     test: /\.vue$/,
-                    loader: 'vue-loader',
+                    loader: 'vue-loader'
                 },
                 {
                     test: /\.tsx?$/,
@@ -27,7 +29,7 @@ const sharedConfig = function () {
                     use: {
                         loader: 'ts-loader',
                         options: {
-                            appendTsSuffixTo: [/\.vue$/],
+                            appendTsSuffixTo: [/\.vue$/]
                         }
                     }
                 },
@@ -69,20 +71,20 @@ const webpackConfig = [
             client: './ClientApp/client.ts'
         },
         output: {
-            publicPath: '/dist/',
+            publicPath: '/dist/'
         }
     }),
     // Renderer
     merge(sharedConfig(), {
         target: 'node',
         entry: {
-            renderer: './ClientApp/renderer.ts',
+            renderer: './ClientApp/renderer.ts'
         },
         output: {
             path: path.resolve(__dirname, './ClientApp/dist'),
-            libraryTarget: 'commonjs',
+            libraryTarget: 'commonjs'
         }
-    }),
+    })
 ];
 
-module.exports = webpackConfig
+module.exports = webpackConfig;

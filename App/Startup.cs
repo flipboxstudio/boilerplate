@@ -88,7 +88,8 @@ namespace App
         /// <param name="hostingEnvironment"></param>
         public void Configure(IApplicationBuilder applicationBuilder, IHostingEnvironment hostingEnvironment)
         {
-            if (hostingEnvironment.IsDevelopment()) {
+            if (hostingEnvironment.IsDevelopment())
+            {
                 applicationBuilder.UseDeveloperExceptionPage();
 
                 applicationBuilder.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
@@ -105,16 +106,17 @@ namespace App
 
             applicationBuilder.UseWebMarkupMin();
 
-            applicationBuilder.UseMvc(routes => {
+            applicationBuilder.UseMvc(routes =>
+            {
                 routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action}/{id?}",
-                    defaults: new { controller = "Home", action = "Index" }
+                    "default",
+                    "{controller}/{action}/{id?}",
+                    new {controller = "Home", action = "Index"}
                 );
 
                 routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" }
+                    "spa-fallback",
+                    new {controller = "Home", action = "Index"}
                 );
             });
         }

@@ -1,17 +1,14 @@
-process.env.VUE_ENV;
-
-const fs = require('fs');
-const path = require('path');
+process.env.VUE_ENV = 'server';
 
 import createApp from './server';
 import { Vue } from 'vue/types/vue';
-import { ServerContext, SpaResponse } from './interfaces';
-import { createRenderer, Renderer } from 'vue-server-renderer';
+import { ServerContext } from './interfaces';
+import { createRenderer } from 'vue-server-renderer';
 import { createServerRenderer, RenderToStringResult } from 'aspnet-prerendering';
 
 export default createServerRenderer((serverContext: ServerContext): Promise<RenderToStringResult> => {
-    const spaResponse: SpaResponse = serverContext.data;
-    const bundleRenderer: Renderer = createRenderer();
+    const spaResponse = serverContext.data;
+    const bundleRenderer = createRenderer();
 
     return new Promise<RenderToStringResult>((resolve: any, reject: any) => {
         createApp(spaResponse).then((app: Vue) => {

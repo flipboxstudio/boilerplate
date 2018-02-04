@@ -1,5 +1,9 @@
+#region using
+
 using App.Responses;
 using Microsoft.AspNetCore.Mvc;
+
+#endregion
 
 public class HomeController : Controller
 {
