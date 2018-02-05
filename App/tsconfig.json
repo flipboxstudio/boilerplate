@@ -3,8 +3,8 @@
         "types": [
             "node"
         ],
-        "module": "esnext",
-        "target": "esnext",
+        "module": "es2015",
+        "target": "es2015",
         "sourceMap": false,
         "strict": true,
         "moduleResolution": "node",

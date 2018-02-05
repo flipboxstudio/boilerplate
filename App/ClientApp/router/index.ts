@@ -1,8 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-
-const Home = () => import('@/components/pages/Home.vue');
-const About = () => import('@/components/pages/About.vue');
+import Home from '@/components/pages/Home.vue';
+import About from '@/components/pages/About.vue';
 
 Vue.use(VueRouter);
 

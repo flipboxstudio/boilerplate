@@ -10,6 +10,9 @@
 <body>
 @RenderBody()
 
+<environment include="Production">
+    <script src="~/dist/manifest.js" asp-append-version="true"></script>
+</environment>
 <script src="~/dist/client.js" asp-append-version="true"></script>
 @RenderSection("scripts", false)
 </body>
