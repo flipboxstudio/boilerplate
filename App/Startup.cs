@@ -1,8 +1,10 @@
 ﻿#region using
 
+using App.Factories;
 using App.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +42,8 @@ namespace App
             // ===== Strongly typed application settings =====
             serviceCollection.AddSingleton(_configuration);
             serviceCollection.Configure<AppSettings>(_configuration.GetSection("AppSettings"));
+            serviceCollection.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            serviceCollection.AddScoped<SpaResponseBuilder>();
 
             // ===== Add Web Minification =====
             serviceCollection
@@ -97,14 +101,17 @@ namespace App
                     HotModuleReplacement = true
                 });
             }
+            else
+            {
+                // ===== Only minify on production, speed up development =====
+                applicationBuilder.UseWebMarkupMin();
+            }
 
             applicationBuilder.UseStaticFiles();
 
             applicationBuilder.UseAuthentication();
 
             applicationBuilder.UseMiddleware<HttpExceptionMiddleware>();
-
-            applicationBuilder.UseWebMarkupMin();
 
             applicationBuilder.UseMvc(routes =>
             {

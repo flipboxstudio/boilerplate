@@ -4,7 +4,7 @@ import { SpaResponse, Kernel } from './interfaces';
 import { VueRouter } from 'vue-router/types/router';
 
 export default (spaResponse: SpaResponse): Promise<Vue> => {
-    return new Promise<Vue>((resolve: any, reject: any) => {
+    return new Promise<Vue>((resolve: Function, reject: Function) => {
         const kernel: Kernel = createApp();
         const app: Vue = kernel.app;
         const router: VueRouter = kernel.router;

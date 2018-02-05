@@ -21,6 +21,7 @@ const sharedConfig = function () {
         module: {
             rules: [{
                     test: /\.vue$/,
+                    exclude: /node_modules/,
                     loader: 'vue-loader'
                 },
                 {
@@ -35,7 +36,7 @@ const sharedConfig = function () {
                 },
                 {
                     test: /\.js$/,
-                    exclude: /(node_modules|bower_components)/,
+                    exclude: /node_modules/,
                     use: {
                         loader: "babel-loader",
                         query: {
@@ -45,7 +46,7 @@ const sharedConfig = function () {
                 }
             ]
         },
-        devtool: '#eval-source-map'
+        devtool: 'cheap-module-eval-source-map'
     }
 
     if (process.env.NODE_ENV === 'production') {

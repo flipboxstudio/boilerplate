@@ -1,5 +1,6 @@
 #region using
 
+using App.Factories;
 using App.Responses;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,11 +8,15 @@ using Microsoft.AspNetCore.Mvc;
 
 public class HomeController : Controller
 {
+    private SpaResponseBuilder _spaResponseBuilder;
+
+    public HomeController(SpaResponseBuilder response)
+    {
+        _spaResponseBuilder = response;
+    }
+
     public IActionResult Index()
     {
-        return View(new SpaResponse
-        {
-            UrlPath = Request.Path
-        });
+        return View(_spaResponseBuilder.Make());
     }
 }

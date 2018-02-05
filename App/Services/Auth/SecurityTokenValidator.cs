@@ -42,9 +42,14 @@ namespace App.Services.Auth
         {
             var claimsPrincipal = base.ValidateToken(plainToken, tokenValidationParameter, out securityToken);
 
-            if (Task.Run(async () => await _userManager.GetUserAsync(claimsPrincipal)).Result == null)
+            if (Task.Run<ApplicationUser>(
+                    async () => await _userManager.GetUserAsync(claimsPrincipal)
+                ).Result == null
+            )
+            {
                 throw LogHelper.LogExceptionMessage(
                     new SecurityTokenInvalidUserException("IDX10800: Unable to obtain user."));
+            }
 
             return claimsPrincipal;
         }

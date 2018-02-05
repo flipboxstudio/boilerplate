@@ -3,9 +3,8 @@
         "types": [
             "node"
         ],
-        "module": "es2015",
-        "target": "es2015",
-        "lib": ["es2015"],
+        "module": "esnext",
+        "target": "esnext",
         "sourceMap": false,
         "strict": true,
         "moduleResolution": "node",
