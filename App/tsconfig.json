@@ -5,8 +5,8 @@
         ],
         "module": "es2015",
         "target": "es2015",
-        "lib": ["es6"],
-        "sourceMap": true,
+        "lib": ["es2015"],
+        "sourceMap": false,
         "strict": true,
         "moduleResolution": "node",
         "experimentalDecorators": true

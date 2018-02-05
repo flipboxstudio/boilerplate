@@ -1,9 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const sharedConfig = function () {
-    return {
+    const config = {
         output: {
             path: path.resolve(__dirname, './wwwroot/dist'),
             filename: '[name].js'
@@ -21,12 +22,22 @@ const sharedConfig = function () {
                     loader: 'vue-loader',
                 },
                 {
-                    test: /\.ts$/,
+                    test: /\.tsx?$/,
                     exclude: /node_modules/,
                     use: {
                         loader: 'ts-loader',
                         options: {
-                            appendTsSuffixTo: [/\.vue$/]
+                            appendTsSuffixTo: [/\.vue$/],
+                        }
+                    }
+                },
+                {
+                    test: /\.js$/,
+                    exclude: /(node_modules|bower_components)/,
+                    use: {
+                        loader: "babel-loader",
+                        query: {
+                            presets: [ 'env' ]
                         }
                     }
                 }
@@ -34,9 +45,24 @@ const sharedConfig = function () {
         },
         devtool: '#eval-source-map'
     }
+
+    if (process.env.NODE_ENV === 'production') {
+        config.devtool = false;
+
+        config.plugins = (module.exports.plugins || []).concat([
+            new webpack.DefinePlugin({
+                'process.env': {
+                    NODE_ENV: '"production"'
+                }
+            }),
+            new UglifyJsPlugin({ parallel: true })
+        ]);
+    }
+
+    return config;
 }
 
-module.exports = [
+const webpackConfig = [
     // Client
     merge(sharedConfig(), {
         entry: {
@@ -59,23 +85,4 @@ module.exports = [
     }),
 ];
 
-if (process.env.NODE_ENV === 'production') {
-    module.exports.devtool = '#source-map';
-
-    module.exports.plugins = (module.exports.plugins || []).concat([
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: '"production"'
-            }
-        }),
-        new webpack.optimize.UglifyJsPlugin({
-            sourceMap: true,
-            compress: {
-                warnings: false
-            }
-        }),
-        new webpack.LoaderOptionsPlugin({
-            minimize: true
-        })
-    ]);
-}
+module.exports = webpackConfig

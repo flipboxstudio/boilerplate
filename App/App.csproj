@@ -20,6 +20,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="6.10.5" />
     <PackageReference Include="WebApiContrib.Core" Version="1.2.0" />
+    <PackageReference Include="WebMarkupMin.AspNetCore2" Version="2.4.2" />
   </ItemGroup>
 
   <ItemGroup>

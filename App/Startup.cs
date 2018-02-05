@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using WebMarkupMin.AspNetCore2;
 
 #endregion
 
@@ -39,6 +40,13 @@ namespace App
             // ===== Strongly typed application settings =====
             serviceCollection.AddSingleton(_configuration);
             serviceCollection.Configure<AppSettings>(_configuration.GetSection("AppSettings"));
+
+            // ===== Add Web Minification =====
+            serviceCollection
+                .AddWebMarkupMin()
+                .AddHtmlMinification()
+                .AddXmlMinification()
+                .AddHttpCompression();
 
             // ===== Add database service =====
             serviceCollection.AddDatabaseService()
@@ -94,6 +102,8 @@ namespace App
             applicationBuilder.UseAuthentication();
 
             applicationBuilder.UseMiddleware<HttpExceptionMiddleware>();
+
+            applicationBuilder.UseWebMarkupMin();
 
             applicationBuilder.UseMvc(routes => {
                 routes.MapRoute(
