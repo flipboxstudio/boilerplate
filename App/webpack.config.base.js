@@ -1,4 +1,6 @@
 const path = require('path');
+const webpack = require('webpack');
+const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
 module.exports = {
     output: {
@@ -17,37 +19,30 @@ module.exports = {
     module: {
         rules: [{
             test: /\.vue$/,
+            include: /ClientApp/,
             exclude: /node_modules/,
             loader: 'vue-loader'
         },
         {
             test: /\.ts?$/,
+            include: /ClientApp/,
             exclude: /node_modules/,
             use: [
                 {
                     loader: 'ts-loader',
-                    options: { appendTsSuffixTo: [/\.vue$/] }
-                }
-            ]
-        },
-        {
-            test: /\.css$/,
-            exclude: /node_modules/,
-            use: [
-                {
-                    loader: 'style-loader',
-                },
-                {
-                    loader: 'css-loader',
                     options: {
-                        importLoaders: 1,
+                        silent: true,
+                        appendTsSuffixTo: [/\.vue$/]
                     }
-                },
-                {
-                    loader: 'postcss-loader'
                 }
             ]
         }
     ]},
+    plugins: [
+        new WebpackCleanupPlugin({
+            exclude: [ '.gitignore' ]
+        }),
+        new webpack.EnvironmentPlugin(['NODE_ENV'])
+    ],
     devtool: 'cheap-module-eval-source-map'
 }

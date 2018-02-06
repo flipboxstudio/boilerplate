@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using WebMarkupMin.AspNetCore2;
 
 #endregion
@@ -44,6 +42,7 @@ namespace App
             serviceCollection.Configure<AppSettings>(_configuration.GetSection("AppSettings"));
             serviceCollection.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             serviceCollection.AddScoped<SpaResponseBuilder>();
+            serviceCollection.AddNodeServices();
 
             // ===== Add Web Minification =====
             serviceCollection
@@ -69,20 +68,7 @@ namespace App
                     });
                 })
                 // ===== Add MVC service =====
-                .AddMvc()
-                // ===== Configure JSON naming strategy =====
-                .AddJsonOptions(mvcJsonOptions =>
-                {
-                    // ===== Use snake case =====
-                    mvcJsonOptions.SerializerSettings.ContractResolver = new DefaultContractResolver
-                    {
-                        NamingStrategy = new SnakeCaseNamingStrategy()
-                    };
-                    mvcJsonOptions.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
-                    mvcJsonOptions.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-
-                    JsonConvert.DefaultSettings = () => mvcJsonOptions.SerializerSettings;
-                });
+                .AddMvc();
         }
 
         /// <summary>

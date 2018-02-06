@@ -1,14 +1,12 @@
 import Vue from 'vue';
+import state from './state';
 import Vuex, { Store } from 'vuex';
 
 Vue.use(Vuex);
 
-export function createStore(): Store<never[]> {
+export function createStore(): Store<any> {
     return new Store({
-        state: [],
-        getters: {},
-        mutations: {},
-        actions: {},
+        state,
         strict: true
     });
 }

@@ -1,15 +1,20 @@
 import Vue from 'vue';
 import { Store } from 'vuex';
-import { Kernel } from './interfaces';
+import { Kernel } from './typing';
+import debugTool from './lib/debug';
 import { createStore } from './store';
 import App from './components/App.vue';
 import { createRouter } from './router';
 import { Vue as VueType } from 'vue/types/vue';
 import { VueRouter } from 'vue-router/types/router';
 
+Vue.prototype.$log = debugTool.log;
+Vue.prototype.$info = debugTool.info;
+Vue.prototype.$error = debugTool.error;
+
 export function createApp(): Kernel {
     const router: VueRouter = createRouter();
-    const store: Store<never[]> = createStore();
+    const store: Store<any> = createStore();
 
     const app: VueType = new Vue({
         router: router,

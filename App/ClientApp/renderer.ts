@@ -2,42 +2,51 @@ process.env.VUE_ENV = 'server';
 
 import { createApp } from './app';
 import { Vue } from 'vue/types/vue';
-import { SpaResponse } from './interfaces/index';
+const merge = require('webpack-merge');
+import { Component } from 'vue-router/types/router';
 import { createServerRenderer, RenderToStringResult } from 'aspnet-prerendering';
 import { createRenderer as createVueServerRenderer, Renderer } from 'vue-server-renderer';
+import { SpaResponse, ServerRendererKernel, BootFuncParameters, RouterMeta } from './typing';
 
-const createServerApp = function (spaResponse: SpaResponse): Promise<Vue> {
-    return new Promise<Vue>((resolve: Function, reject: Function) => {
+const createServerApp = function (spaResponse: SpaResponse): Promise<ServerRendererKernel> {
+    return new Promise<ServerRendererKernel>((resolve: Function, reject: Function) => {
         const { app, router } = createApp();
 
         router.push(spaResponse.urlPath);
 
         router.onReady(() => {
-            const matchedComponents = router.getMatchedComponents();
+            const route = router.currentRoute;
+            const meta = merge({}, route.meta) as RouterMeta;
 
-            if (!matchedComponents.length) {
-                return reject({ statusCode: 404, message: 'Not Found' });
-            }
-
-            resolve(app);
+            resolve({ app, meta } as ServerRendererKernel);
         });
     });
 };
 
-export default createServerRenderer(({ data }) => {
+export default createServerRenderer((params: BootFuncParameters): Promise<RenderToStringResult> => {
+    const { data } = params;
     const bundleRenderer: Renderer = createVueServerRenderer();
 
     return new Promise<RenderToStringResult>((resolve: Function, reject: Function) => {
-        createServerApp(data).then((app) => {
+        createServerApp(data).then((kernel) => {
+            const { app, meta } = kernel;
+
             bundleRenderer.renderToString(app).then((html: string) => {
                 const result: RenderToStringResult = {
                     html: html,
-                    globals: { __GLOBAL__: data || {} }
+                    globals: data,
+                    statusCode: meta.statusCode
                 };
 
                 resolve(result);
-            }).catch(({ message }: any) => {
-                reject(message);
+            }).catch((error: any) => {
+                const result: RenderToStringResult = {
+                    html: error.message,
+                    globals: data,
+                    statusCode: 500
+                };
+
+                resolve(result);
             });
         })
     });

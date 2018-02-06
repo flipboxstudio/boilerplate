@@ -1,6 +1,6 @@
 import { createApp } from './app';
+import { Kernel } from './typing';
 import { Vue } from 'vue/types/vue';
-import { Kernel } from './interfaces/index';
 import { VueRouter } from 'vue-router/types/router';
 
 const kernel: Kernel = createApp();

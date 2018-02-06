@@ -1,6 +1,11 @@
-@model App.Responses.SpaResponse
+@model Newtonsoft.Json.Linq.JObject
+
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<div id="app" asp-prerender-module="ClientApp/dist/renderer" asp-prerender-data="@Model"></div>
+<main id="app">@Html.Raw(@ViewData["html"])</main>
+
+@section Data {
+    <script type="text-javascript">window.__GLOBAL__ = @Html.Raw(Json.Serialize(Model))</script>
+}

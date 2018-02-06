@@ -1,7 +1,3 @@
-#region using
-
-#endregion
-
 namespace App.Responses
 {
     public class SpaResponse
