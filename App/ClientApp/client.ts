@@ -1,12 +1,12 @@
-import { createApp } from './app';
-import { Kernel } from './typing';
-import { Vue } from 'vue/types/vue';
-import { VueRouter } from 'vue-router/types/router';
+import { VueRouter } from 'vue-router/types/router'
+import { Vue } from 'vue/types/vue'
+import { createApp } from './app'
+import { Kernel } from './typing'
 
-const kernel: Kernel = createApp();
-const app: Vue = kernel.app;
-const router: VueRouter = kernel.router;
+const kernel: Kernel = createApp()
+const app: Vue = kernel.app
+const router: VueRouter = kernel.router
 
 router.onReady(() => {
-    app.$mount('#app');
-});
+  app.$mount('#app')
+})

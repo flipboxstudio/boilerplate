@@ -1,12 +1,12 @@
-import Vue from 'vue';
-import state from './state';
-import Vuex, { Store } from 'vuex';
+import Vue from 'vue'
+import Vuex, { Store } from 'vuex'
+import state from './state'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
-export function createStore(): Store<any> {
-    return new Store({
-        state,
-        strict: true
-    });
+export function createStore (): Store<any> {
+  return new Store({
+    state,
+    strict: true
+  })
 }

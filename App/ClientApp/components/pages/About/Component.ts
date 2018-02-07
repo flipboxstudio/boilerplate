@@ -1,7 +1,7 @@
-import Vue from 'vue';
+import Vue from 'vue'
 
 export default Vue.extend({
-    mounted() {
-        this.$log('About mounted');
-    }
-});
+  mounted () {
+    this.$log('About mounted')
+  }
+})

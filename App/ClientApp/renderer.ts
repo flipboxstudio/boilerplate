@@ -1,53 +1,70 @@
-process.env.VUE_ENV = 'server';
+process.env.VUE_ENV = 'server'
 
-import { createApp } from './app';
-import { Vue } from 'vue/types/vue';
-const merge = require('webpack-merge');
-import { Component } from 'vue-router/types/router';
-import { createServerRenderer, RenderToStringResult } from 'aspnet-prerendering';
-import { createRenderer as createVueServerRenderer, Renderer } from 'vue-server-renderer';
-import { SpaResponse, ServerRendererKernel, BootFuncParameters, RouterMeta } from './typing';
+import { createServerRenderer, RenderToStringResult } from 'aspnet-prerendering'
+import { createRenderer as createVueServerRenderer, Renderer } from 'vue-server-renderer'
+import { Vue } from 'vue/types/vue'
+import { createApp } from './app'
+const merge = require('webpack-merge')
+import { BootFuncParameters, RouterMeta, ServerRendererKernel as iServerRendererKernel, SpaResponse } from './typing'
 
-const createServerApp = function (spaResponse: SpaResponse): Promise<ServerRendererKernel> {
-    return new Promise<ServerRendererKernel>((resolve: Function, reject: Function) => {
-        const { app, router } = createApp();
+class ServerRendererKernel implements iServerRendererKernel {
+  public app: Vue
+  public meta: RouterMeta
 
-        router.push(spaResponse.urlPath);
+  constructor (app: Vue, meta: RouterMeta) {
+    this.app = app
+    this.meta = meta
+  }
+}
 
-        router.onReady(() => {
-            const route = router.currentRoute;
-            const meta = merge({}, route.meta) as RouterMeta;
+const createServerApp = (spaResponse: SpaResponse): Promise<iServerRendererKernel> => {
+  return new Promise<iServerRendererKernel>((resolve) => {
+    const { app, router } = createApp()
 
-            resolve({ app, meta } as ServerRendererKernel);
-        });
-    });
-};
+    router.push(spaResponse.urlPath)
+
+    router.onReady(() => {
+      const route = router.currentRoute
+      const meta: RouterMeta = merge({}, route.meta)
+
+      resolve(new ServerRendererKernel(app, meta))
+    })
+  })
+}
 
 export default createServerRenderer((params: BootFuncParameters): Promise<RenderToStringResult> => {
-    const { data } = params;
-    const bundleRenderer: Renderer = createVueServerRenderer();
+  const { data } = params
+  const bundleRenderer: Renderer = createVueServerRenderer()
 
-    return new Promise<RenderToStringResult>((resolve: Function, reject: Function) => {
-        createServerApp(data).then((kernel) => {
-            const { app, meta } = kernel;
+  return new Promise<RenderToStringResult>((resolve) => {
+    createServerApp(data).then((kernel) => {
+      const { app, meta } = kernel
 
-            bundleRenderer.renderToString(app).then((html: string) => {
-                const result: RenderToStringResult = {
-                    html: html,
-                    globals: data,
-                    statusCode: meta.statusCode
-                };
+      bundleRenderer.renderToString(app).then((html: string) => {
+        const result: RenderToStringResult = {
+          globals: data,
+          html,
+          statusCode: meta.statusCode
+        }
 
-                resolve(result);
-            }).catch((error: any) => {
-                const result: RenderToStringResult = {
-                    html: error.message,
-                    globals: data,
-                    statusCode: 500
-                };
+        resolve(result)
+      }).catch((reason: any) => {
+        const result: RenderToStringResult = {
+          globals: data,
+          html: reason.message,
+          statusCode: 500
+        }
 
-                resolve(result);
-            });
-        })
-    });
-});
+        resolve(result)
+      })
+    }).catch((reason) => {
+      const result: RenderToStringResult = {
+        globals: {},
+        html: reason.message,
+        statusCode: 500
+      }
+
+      resolve(result)
+    })
+  })
+})

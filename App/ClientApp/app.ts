@@ -1,26 +1,28 @@
-import Vue from 'vue';
-import { Store } from 'vuex';
-import { Kernel } from './typing';
-import debugTool from './lib/debug';
-import { createStore } from './store';
-import App from './components/App.vue';
-import { createRouter } from './router';
-import { Vue as VueType } from 'vue/types/vue';
-import { VueRouter } from 'vue-router/types/router';
+import Vue from 'vue'
+import App from './components/App.vue'
+import debugTool from './lib/debug'
 
-Vue.prototype.$log = debugTool.log;
-Vue.prototype.$info = debugTool.info;
-Vue.prototype.$error = debugTool.error;
+import { VueRouter } from 'vue-router/types/router'
+import { Vue as VueType } from 'vue/types/vue'
+import { Store } from 'vuex'
 
-export function createApp(): Kernel {
-    const router: VueRouter = createRouter();
-    const store: Store<any> = createStore();
+import { createRouter } from './router'
+import { createStore } from './store'
+import { Kernel } from './typing'
 
-    const app: VueType = new Vue({
-        router: router,
-        store: store,
-        render: h => h(App)
-    });
+Vue.prototype.$log = debugTool.log
+Vue.prototype.$info = debugTool.info
+Vue.prototype.$error = debugTool.error
 
-    return { app, router, store };
+export function createApp (): Kernel {
+  const router: VueRouter = createRouter()
+  const store: Store<any> = createStore()
+
+  const app: VueType = new Vue({
+    render: (h) => h(App),
+    router,
+    store
+  })
+
+  return { app, router, store }
 }
