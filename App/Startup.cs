@@ -42,6 +42,7 @@ namespace App
             serviceCollection.Configure<AppSettings>(_configuration.GetSection("AppSettings"));
             serviceCollection.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             serviceCollection.AddScoped<SpaResponseBuilder>();
+            serviceCollection.AddNodeServices();
 
             // ===== Add Web Minification =====
             serviceCollection

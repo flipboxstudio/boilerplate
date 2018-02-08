@@ -11,8 +11,7 @@ module.exports = {
     alias: {
       vue$: 'vue/dist/vue.esm.js',
       vuex$: 'vuex/dist/vuex.esm.js',
-      'vue-router$': 'vue-router/dist/vue-router.esm.js',
-      '@': path.resolve(__dirname, './ClientApp')
+      'vue-router$': 'vue-router/dist/vue-router.esm.js'
     },
     extensions: ['.ts', '.js', '.vue', '.json']
   },
@@ -43,9 +42,12 @@ module.exports = {
   },
   plugins: [
     new WebpackCleanupPlugin({
-      exclude: ['.gitignore']
+      exclude: ['.gitignore'],
+      quiet: true
     }),
-    new webpack.EnvironmentPlugin(['NODE_ENV'])
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'development' // use 'development' unless process.env.NODE_ENV is defined
+    })
   ],
   devtool: 'cheap-module-eval-source-map'
 }

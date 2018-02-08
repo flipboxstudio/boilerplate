@@ -39,14 +39,7 @@ namespace App.Factories
 
         private void PrepareResponse()
         {
-            PrepareCommonResponse();
-
             PrepareAuthResponse();
-        }
-
-        private void PrepareCommonResponse()
-        {
-            _response.UrlPath = _httpContext.Request.Path;
         }
 
         private void PrepareAuthResponse()

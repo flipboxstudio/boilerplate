@@ -1,7 +1,7 @@
 import { Store } from 'vuex';
 import { Vue } from 'vue/types/vue';
-import { VueRouter, Component } from 'vue-router/types/router';
-import { BootFuncParams } from 'aspnet-prerendering';
+import { VueRouter } from 'vue-router/types/router';
+import { BootFuncParams as iBootFuncParams } from 'aspnet-prerendering';
 
 export interface DebugTool {
   log(message?: any, ...optionalParams: any[]): void
@@ -27,23 +27,9 @@ export interface Auth {
 }
 
 export interface SpaResponse {
-  urlPath: string,
   auth: Auth
 }
 
-export interface RouterMeta {
-  statusCode: number
-}
-
-export interface ServerRendererKernel {
-  app: Vue,
-  meta: RouterMeta
-}
-
-export interface ServerContext {
-    data: SpaResponse
-}
-
-export interface BootFuncParameters extends BootFuncParams {
-    data: SpaResponse
+export interface BootFuncParams extends iBootFuncParams {
+  data: SpaResponse
 }

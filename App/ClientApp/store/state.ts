@@ -1,7 +1,7 @@
 import { SpaResponse } from './../typing'
 import { Auth } from './classes/auth/Auth'
 
-export class DefaultState implements SpaResponse {
+export class State implements SpaResponse {
   public urlPath: string
   public auth: Auth
 
@@ -11,4 +11,4 @@ export class DefaultState implements SpaResponse {
   }
 }
 
-export default new DefaultState()
+export default new State()
