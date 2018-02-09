@@ -1,11 +1,10 @@
+import 'bootstrap'
 import Vue from 'vue'
-import App from './components/App.vue'
-import debugTool from './lib/debug'
-
 import { VueRouter } from 'vue-router/types/router'
 import { Vue as VueType } from 'vue/types/vue'
 import { Store } from 'vuex'
-
+import App from './components/App.vue'
+import debugTool from './lib/debug'
 import { createRouter } from './router'
 import { createStore } from './store'
 import { Kernel } from './typing'

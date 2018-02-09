@@ -1,6 +1,5 @@
 const path = require('path')
 const webpack = require('webpack')
-const WebpackCleanupPlugin = require('webpack-cleanup-plugin')
 
 module.exports = {
   output: {
@@ -13,7 +12,10 @@ module.exports = {
       vuex$: 'vuex/dist/vuex.esm.js',
       'vue-router$': 'vue-router/dist/vue-router.esm.js'
     },
-    extensions: ['.ts', '.js', '.vue', '.json']
+    extensions: [
+      '.ts', '.js', '.vue', '.json',
+      'css', 'styl'
+    ]
   },
   module: {
     rules: [{
@@ -41,10 +43,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new WebpackCleanupPlugin({
-      exclude: ['.gitignore'],
-      quiet: true
-    }),
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development' // use 'development' unless process.env.NODE_ENV is defined
     })

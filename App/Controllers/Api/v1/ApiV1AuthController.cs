@@ -8,6 +8,7 @@ using App.Exceptions;
 using App.Requests;
 using App.Services.Auth;
 using App.Services.Db.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,8 +19,8 @@ using WebApiContrib.Core.Filters;
 
 namespace App.Controllers.Api.v1
 {
-    [Route("api/v1/[controller]/[action]")]
-    public class AuthController : Controller
+    [Route("api/v1/auth/[action]")]
+    public class ApiV1AuthController : Controller
     {
         private readonly Dictionary<int, string> _authMessage = new Dictionary<int, string>
         {
@@ -45,7 +46,7 @@ namespace App.Controllers.Api.v1
         /// <param name="signInManager"></param>
         /// <param name="tokenGenerator"></param>
         /// <param name="userManager"></param>
-        public AuthController(
+        public ApiV1AuthController(
             SignInManager<ApplicationUser> signInManager,
             TokenGenerator tokenGenerator,
             UserManager<ApplicationUser> userManager
@@ -154,7 +155,7 @@ namespace App.Controllers.Api.v1
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<object> Authorize()
         {
             return new

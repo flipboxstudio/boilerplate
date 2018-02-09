@@ -45,22 +45,15 @@ namespace App.Factories
         private void PrepareAuthResponse()
         {
             _response.Auth.User = GetAuthenticatedUser();
-
-            _response.Auth.Token = (_response.Auth.User == null) ? null : GetTokenFromHeaders();
         }
 
         private ApplicationUser GetAuthenticatedUser()
         {
+            var claimsPrincipal = _httpContext.User;
+
             return Task.Run<ApplicationUser>(
-                async () => await _userManager.GetUserAsync(_httpContext.User)
+                async () => await _userManager.GetUserAsync(claimsPrincipal)
             ).Result;
-        }
-
-        private string GetTokenFromHeaders()
-        {
-            var exists = _httpContext.Request.Headers.TryGetValue("Authorization", out var token);
-
-            return exists ? (new Regex(@"^[Bb]earer\s+")).Replace(token, "") : null;
         }
     }
 }

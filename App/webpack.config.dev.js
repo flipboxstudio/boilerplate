@@ -18,6 +18,13 @@ module.exports = merge(base, {
         configFile: path.resolve(__dirname, './tslint.json'),
         tsConfigFile: path.resolve(__dirname, './tsconfig.json')
       }
+    }, {
+      test: /\.css$/,
+      use: ['style-loader', 'css-loader', 'postcss-loader']
+    },
+    {
+      test: /\.scss$/,
+      use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader']
     }]
   },
   plugins: [

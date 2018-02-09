@@ -21,6 +21,7 @@ namespace App.Requests
         /// </summary>
         /// <returns></returns>
         [Required]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
     }
 }

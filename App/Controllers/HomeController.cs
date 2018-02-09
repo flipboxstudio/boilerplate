@@ -1,6 +1,7 @@
 #region using
 
 using App.Factories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 #endregion
@@ -14,6 +15,7 @@ public class HomeController : Controller
         _spaResponseBuilder = response;
     }
 
+    [Authorize]
     public IActionResult Index()
     {
         var data = _spaResponseBuilder.Make();

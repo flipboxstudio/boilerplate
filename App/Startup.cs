@@ -81,6 +81,8 @@ namespace App
             if (hostingEnvironment.IsDevelopment())
             {
                 applicationBuilder.UseDeveloperExceptionPage();
+                applicationBuilder.UseBrowserLink();
+                applicationBuilder.UseDatabaseErrorPage();
 
                 applicationBuilder.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
@@ -96,6 +98,7 @@ namespace App
             applicationBuilder.UseStaticFiles();
 
             applicationBuilder.UseAuthentication();
+            applicationBuilder.UseCookiePolicy();
 
             applicationBuilder.UseMiddleware<HttpExceptionMiddleware>();
 

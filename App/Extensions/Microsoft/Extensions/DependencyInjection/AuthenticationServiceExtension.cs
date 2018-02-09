@@ -9,6 +9,7 @@ using App;
 using App.Services.Auth;
 using App.Services.Db;
 using App.Services.Db.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -56,16 +57,13 @@ namespace Microsoft.Extensions.DependencyInjection
                 // ===== Signin settings =====
                 options.SignIn.RequireConfirmedEmail = false;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
-            }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
             // ===== Add Jwt Authentication =====
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
-            serviceCollection.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(jwtBearerOptions =>
+            serviceCollection.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddJwtBearer(jwtBearerOptions =>
             {
                 // ===== Add another service for dependency injection feature =====
                 serviceCollection.AddTransient<SecurityTokenValidator>();
@@ -89,6 +87,17 @@ namespace Microsoft.Extensions.DependencyInjection
                 jwtBearerOptions.SecurityTokenValidators.Add(
                     serviceCollection.BuildServiceProvider().GetService<SecurityTokenValidator>()
                 );
+            });
+
+            serviceCollection.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+                options.Cookie.Expiration = TimeSpan.FromDays(150);
+                options.LoginPath = "/Auth/Login"; // If the LoginPath is not set here, ASP.NET Core will default to /Auth/Login
+                options.LogoutPath = "/Auth/Logout"; // If the LogoutPath is not set here, ASP.NET Core will default to /Auth/Logout
+                options.AccessDeniedPath = "/Auth/Login"; // If the AccessDeniedPath is not set here, ASP.NET Core will default to /Auth/AccessDenied
+                options.SlidingExpiration = true;
             });
 
             // ===== Add another service for dependency injection feature =====

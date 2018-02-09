@@ -1,0 +1,18 @@
+@import "custom";
+@import "~bootstrap/scss/bootstrap.scss";
+
+body.non-spa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    padding-top: 40px;
+    padding-bottom: 40px;
+
+    form.auth-box {
+        width: 100%;
+        max-width: 330px;
+        padding: 15px;
+        margin: 0 auto;
+    }
+}

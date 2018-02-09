@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"]</title>
+
+    <environment include="Production">
+        <link rel="stylesheet" href="~/dist/client.css" asp-append-version="true"/>
+    </environment>
+
+    @RenderSection("styles", false)
+</head>
+<body class="non-spa">
+    <div id="app">
+        <v-app>
+            @RenderBody()
+        </v-app>
+    </div>
+
+    <environment include="Production">
+        <script src="~/dist/base/manifest.js" asp-append-version="true"></script>
+        <script src="~/dist/base/vendor.js" asp-append-version="true"></script>
+    </environment>
+
+    <script src="~/dist/base/base.js" asp-append-version="true"></script>
+    @RenderSection("scripts", false)
+</body>
+</html>

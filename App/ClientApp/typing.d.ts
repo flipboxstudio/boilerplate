@@ -22,7 +22,6 @@ export interface ApplicationUser {
 }
 
 export interface Auth {
-  token: string,
   user: ApplicationUser
 }
 

@@ -8,6 +8,7 @@
     <router-link
       to="/about"
       :exact="true">About</router-link>
+    <a href="/Auth/Logout">Logout</a>
 
     <router-view/>
   </div>

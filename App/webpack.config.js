@@ -33,7 +33,18 @@ const webpackConfig = [
   // Client
   merge(baseConfig, {
     entry: {
-      client: './ClientApp/client.ts'
+      base: ['babel-polyfill', './ClientApp/base.ts']
+    },
+    output: {
+      path: path.resolve(__dirname, './wwwroot/dist/base'),
+      publicPath: '/dist/base/'
+    },
+    plugins: clientPlugins
+  }),
+  // Client
+  merge(baseConfig, {
+    entry: {
+      client: ['babel-polyfill', './ClientApp/client.ts']
     },
     output: {
       publicPath: '/dist/'

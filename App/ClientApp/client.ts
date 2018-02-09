@@ -1,6 +1,7 @@
 import { VueRouter } from 'vue-router/types/router'
 import { Vue } from 'vue/types/vue'
 import { createApp } from './app'
+import './scss/main.scss'
 import { Kernel } from './typing'
 
 const kernel: Kernel = createApp()

@@ -8,8 +8,6 @@ namespace App.Responses
 {
     public class Auth
     {
-        public string Token { get; set; }
-
         public ApplicationUser User { get; set; }
     }
 }
