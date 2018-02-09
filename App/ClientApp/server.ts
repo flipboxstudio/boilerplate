@@ -1,10 +1,10 @@
 import { Vue } from 'vue/types/vue'
 import { createApp } from './app'
-import { BootFuncParams } from './typing'
+import { IBootFuncParams } from './typing'
 
-export default (serverContext: BootFuncParams): Promise<Vue> => {
+export default (serverContext: IBootFuncParams): Promise<Vue> => {
   return new Promise<Vue>((resolve) => {
-    const { app, router } = createApp()
+    const { app, router } = createApp(serverContext.data)
 
     router.push(serverContext.url)
 

@@ -1,4 +1,4 @@
-import { DebugTool as iDebugTool } from '../typing'
+import { IDebugTool } from '../typing'
 const debug: any = require('debug')
 
 if (process.env.NODE_ENV !== 'production') {
@@ -7,11 +7,12 @@ if (process.env.NODE_ENV !== 'production') {
   debug.disable('app:*')
 }
 
-const log = debug('app:__LOG__')
-const info = debug('app:__INFO__')
-const error = debug('app:__ERROR__')
+export const createLog = (name: string) => debug(`app:${name}`)
+export const log = debug('app:__LOG__')
+export const info = debug('app:__INFO__')
+export const error = debug('app:__ERROR__')
 
-class DebugTool implements iDebugTool {
+class DebugTool implements IDebugTool {
   public log = log
   public info = info
   public error = error

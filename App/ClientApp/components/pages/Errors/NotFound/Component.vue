@@ -2,4 +2,4 @@
   <h1>Not Found</h1>
 </template>
 
-<script src="./Component.ts"></script>
+<script lang="ts" src="./Component.ts"></script>

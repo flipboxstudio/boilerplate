@@ -1,6 +1,6 @@
-import { ApplicationUser as iApplicationUser } from './../../../typing'
+import { IApplicationUser } from './../../../typing'
 
-export class ApplicationUser implements iApplicationUser {
+export class ApplicationUserState implements IApplicationUser {
   public id: string
   public userName: string
   public email: string
