@@ -66,6 +66,8 @@ const webpackConfig = [
       libraryTarget: 'commonjs2'
     },
     plugins: [
+      // This plugins generates `vue-ssr-server-bundle.json` in the
+      // output directory.
       new VueSSRServerPlugin()
     ]
   })

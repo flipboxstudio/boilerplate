@@ -1,8 +1,7 @@
+// This module is a base module. It doesn't have vue-router and vuex.
+import 'bootstrap'
 import Vue from 'vue'
-import Vuetify from 'vuetify'
 import './scss/main.scss'
-
-Vue.use(Vuetify)
 
 /* tslint:disable:no-unused-expression */
 new Vue({

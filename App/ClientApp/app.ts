@@ -1,4 +1,3 @@
-import 'bootstrap'
 import Vue from 'vue'
 import { VueRouter } from 'vue-router/types/router'
 import { Vue as VueType } from 'vue/types/vue'

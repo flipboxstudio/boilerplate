@@ -34,6 +34,11 @@ namespace App.Middlewares
             }
             catch (HttpException httpException)
             {
+                if (httpContext.Request.Headers["Accept"] != "application/json")
+                {
+                    return;
+                }
+
                 httpContext.Response.StatusCode = (int) httpException.HttpStatusCode;
                 httpContext.Response.ContentType = httpException.ContentType;
 

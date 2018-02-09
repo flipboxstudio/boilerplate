@@ -43,6 +43,12 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      $: 'jquery', // Used for Bootstrap JavaScript components
+      jQuery: 'jquery', // Used for Bootstrap JavaScript components
+      Popper: 'popper.js', // Used for Bootstrap dropdown, popup and tooltip JavaScript components
+      Tether: 'tether' // Used for Bootstrap tooltip components
+    }),
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development' // use 'development' unless process.env.NODE_ENV is defined
     })

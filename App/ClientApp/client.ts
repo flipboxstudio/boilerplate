@@ -1,3 +1,4 @@
+import 'bootstrap'
 import { VueRouter } from 'vue-router/types/router'
 import { Vue } from 'vue/types/vue'
 import { createApp } from './app'

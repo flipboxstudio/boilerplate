@@ -93,14 +93,14 @@ namespace App
             {
                 // ===== Only minify on production, speed up development =====
                 applicationBuilder.UseWebMarkupMin();
+
+                applicationBuilder.UseMiddleware<HttpExceptionMiddleware>();
             }
 
             applicationBuilder.UseStaticFiles();
 
             applicationBuilder.UseAuthentication();
             applicationBuilder.UseCookiePolicy();
-
-            applicationBuilder.UseMiddleware<HttpExceptionMiddleware>();
 
             applicationBuilder.UseMvc(routes =>
             {

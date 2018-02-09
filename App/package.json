@@ -13,10 +13,10 @@
     "debug": "^3.1.0",
     "jquery": "^3.3.1",
     "popper.js": "^1.12.9",
+    "tether": "^1.4.3",
     "vue": "^2.5.0",
     "vue-router": "^3.0.1",
     "vue-server-renderer": "^2.5.13",
-    "vuetify": "^1.0.0-beta.6",
     "vuex": "^3.0.1",
     "webpack-merge": "^4.1.1"
   },
