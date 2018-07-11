@@ -4,16 +4,16 @@ using Microsoft.AspNetCore.Mvc;
 
 #endregion
 
-namespace App.Controllers
+namespace App.Controllers.Api.v1
 {
-    public class AppController : Controller
+    [Route("api/v1/[action]")]
+    public class ApiV1Controller : Controller
     {
         /// <summary>
         ///     Default route.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("")]
         public object Index()
         {
             return new

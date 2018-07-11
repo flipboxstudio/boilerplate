@@ -1,0 +1,7 @@
+@model App.Responses.SpaResponse
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<main id="app" asp-prerender-module="ClientApp/renderer" asp-prerender-data="Model"></main>

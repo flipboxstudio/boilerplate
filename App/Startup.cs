@@ -1,12 +1,14 @@
 ﻿#region using
 
+using App.Factories;
 using App.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using WebMarkupMin.AspNetCore2;
 
 #endregion
 
@@ -38,6 +40,16 @@ namespace App
             // ===== Strongly typed application settings =====
             serviceCollection.AddSingleton(_configuration);
             serviceCollection.Configure<AppSettings>(_configuration.GetSection("AppSettings"));
+            serviceCollection.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            serviceCollection.AddScoped<SpaResponseBuilder>();
+            serviceCollection.AddNodeServices();
+
+            // ===== Add Web Minification =====
+            serviceCollection
+                .AddWebMarkupMin()
+                .AddHtmlMinification()
+                .AddXmlMinification()
+                .AddHttpCompression();
 
             // ===== Add database service =====
             serviceCollection.AddDatabaseService()
@@ -56,20 +68,7 @@ namespace App
                     });
                 })
                 // ===== Add MVC service =====
-                .AddMvc()
-                // ===== Configure JSON naming strategy =====
-                .AddJsonOptions(mvcJsonOptions =>
-                {
-                    // ===== Use snake case =====
-                    mvcJsonOptions.SerializerSettings.ContractResolver = new DefaultContractResolver
-                    {
-                        NamingStrategy = new SnakeCaseNamingStrategy()
-                    };
-                    mvcJsonOptions.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
-                    mvcJsonOptions.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-
-                    JsonConvert.DefaultSettings = () => mvcJsonOptions.SerializerSettings;
-                });
+                .AddMvc();
         }
 
         /// <summary>
@@ -80,13 +79,42 @@ namespace App
         public void Configure(IApplicationBuilder applicationBuilder, IHostingEnvironment hostingEnvironment)
         {
             if (hostingEnvironment.IsDevelopment())
+            {
                 applicationBuilder.UseDeveloperExceptionPage();
+                applicationBuilder.UseBrowserLink();
+                applicationBuilder.UseDatabaseErrorPage();
+
+                applicationBuilder.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+                {
+                    HotModuleReplacement = true
+                });
+            }
+            else
+            {
+                // ===== Only minify on production, speed up development =====
+                applicationBuilder.UseWebMarkupMin();
+
+                applicationBuilder.UseMiddleware<HttpExceptionMiddleware>();
+            }
+
+            applicationBuilder.UseStaticFiles();
 
             applicationBuilder.UseAuthentication();
+            applicationBuilder.UseCookiePolicy();
 
-            applicationBuilder.UseMiddleware<HttpExceptionMiddleware>();
+            applicationBuilder.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    "default",
+                    "{controller}/{action}/{id?}",
+                    new {controller = "Home", action = "Index"}
+                );
 
-            applicationBuilder.UseMvc();
+                routes.MapSpaFallbackRoute(
+                    "spa-fallback",
+                    new {controller = "Home", action = "Index"}
+                );
+            });
         }
     }
 }
